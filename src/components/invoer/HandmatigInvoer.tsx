@@ -3,13 +3,29 @@ import { useState, useEffect } from "react"
 import { useStore } from "@/lib/store"
 import type { Applicatie, VeldDefinitie } from "@/types"
 
-function legeRij(): Applicatie {
-  return {
+function legeRij(velden: VeldDefinitie[]): Applicatie {
+  const rij: Applicatie = {
     id: crypto.randomUUID(),
     cluster: "", naam: "", saas: false,
     complexiteit: "laag", afloopDatum: "",
     omgeving: "client", status: "groen", leverancier: "",
   }
+  velden.forEach(v => {
+    if (!(v.sleutel in rij)) {
+      (rij as Record<string, unknown>)[v.sleutel] = ""
+    }
+  })
+  return rij
+}
+
+function vulRijAan(rij: Applicatie, velden: VeldDefinitie[]): Applicatie {
+  const bijgewerkt = { ...rij }
+  velden.forEach(v => {
+    if (!(v.sleutel in bijgewerkt)) {
+      (bijgewerkt as Record<string, unknown>)[v.sleutel] = ""
+    }
+  })
+  return bijgewerkt
 }
 
 function renderInvoercel(
@@ -20,7 +36,6 @@ function renderInvoercel(
 ) {
   const sleutel = veld.sleutel
 
-  // Vaste velden met specifieke invoer
   if (sleutel === "saas") {
     return (
       <select style={inputStyle} value={waarde ? "ja" : "nee"} onChange={e => onChange(e.target.value === "ja")}>
@@ -62,9 +77,7 @@ function renderInvoercel(
         onChange={e => onChange(e.target.value)} />
     )
   }
-
-  // Icoon veld — toon de mogelijke waarden als dropdown als mappings beschikbaar zijn
-  if (veld.type === "icoon" && veld.icoonMappings && veld.icoonMappings.length > 0) {
+  if (veld.type === "icoon" && veld.icoonMappings) {
     const opties = veld.icoonMappings.filter(m => m.waarde.trim() !== "")
     if (opties.length > 0) {
       return (
@@ -77,8 +90,6 @@ function renderInvoercel(
       )
     }
   }
-
-  // Standaard: tekstveld voor alle custom velden
   return (
     <input style={inputStyle} type="text" value={String(waarde ?? "")}
       placeholder={veld.label}
@@ -88,42 +99,70 @@ function renderInvoercel(
 
 export default function HandmatigInvoer() {
   const { applicaties, setApplicaties, instellingen } = useStore()
-
-  // Gebruik alle velden uit instellingen — ook niet-zichtbare zijn relevant voor data
   const zichtbareVelden = instellingen.velden.filter(v => v.zichtbaar)
 
-  // Rijen initialiseren vanuit store, altijd synchroon met laatste applicaties
   const [rijen, setRijen] = useState<Applicatie[]>(() =>
-    applicaties.length > 0 ? [...applicaties] : [legeRij()]
+    applicaties.length > 0
+      ? applicaties.map(r => vulRijAan(r, instellingen.velden))
+      : [legeRij(instellingen.velden)]
   )
+  const [gewijzigd, setGewijzigd] = useState(false)
+  const [opgeslagen, setOpgeslagen] = useState(false)
 
-  // Als instellingen veranderen: zorg dat bestaande rijen nieuwe velden kennen
+  // Nieuwe velden uit instellingen toevoegen aan bestaande rijen
   useEffect(() => {
-    setRijen(prev => prev.map(rij => {
-      const bijgewerkt = { ...rij }
-      instellingen.velden.forEach(veld => {
-        if (!(veld.sleutel in bijgewerkt)) {
-          (bijgewerkt as Record<string, unknown>)[veld.sleutel] = ""
-        }
-      })
-      return bijgewerkt
-    }))
+    setRijen(prev => prev.map(r => vulRijAan(r, instellingen.velden)))
   }, [instellingen.velden])
+
+  // Sync als store van buitenaf wijzigt
+  useEffect(() => {
+    if (applicaties.length > 0) {
+      setRijen(applicaties.map(r => vulRijAan(r, instellingen.velden)))
+      setGewijzigd(false)
+    }
+  }, [applicaties])
 
   function updateRij(id: string, sleutel: string, waarde: unknown) {
     setRijen(prev => prev.map(r => r.id === id ? { ...r, [sleutel]: waarde } : r))
+    setGewijzigd(true)
+    setOpgeslagen(false)
+  }
+
+  function verwijderRij(id: string) {
+    setRijen(prev => prev.filter(r => r.id !== id))
+    setGewijzigd(true)
+    setOpgeslagen(false)
+  }
+
+  function voegRijToe() {
+    setRijen(prev => [...prev, legeRij(instellingen.velden)])
+    setGewijzigd(true)
+    setOpgeslagen(false)
+  }
+
+  function annuleren() {
+    setRijen(applicaties.map(r => vulRijAan(r, instellingen.velden)))
+    setGewijzigd(false)
   }
 
   function opslaan() {
-    setApplicaties(rijen.filter(r => r.naam.trim() !== ""))
-    alert("Opgeslagen! Ga naar Applicatieplaat om het resultaat te zien.")
+    const geldig = rijen.filter(r => r.naam.trim() !== "")
+    setApplicaties(geldig)
+    setGewijzigd(false)
+    setOpgeslagen(true)
+    setTimeout(() => setOpgeslagen(false), 3000)
   }
 
-  const tdStyle: React.CSSProperties = { border: "1px solid #e5e7eb", padding: "4px 8px" }
-  const inputStyle: React.CSSProperties = { width: "100%", fontSize: "12px", border: "none", outline: "none", backgroundColor: "transparent", minWidth: "80px" }
+  const tdStyle: React.CSSProperties = { border: "1px solid #e5e7eb", padding: "4px 6px" }
+  const inputStyle: React.CSSProperties = {
+    width: "100%", fontSize: "12px", border: "none", outline: "none",
+    backgroundColor: "transparent", minWidth: "80px"
+  }
+
+  const aantalGeldig = rijen.filter(r => r.naam.trim() !== "").length
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px", paddingBottom: "80px" }}>
       <div style={{ overflowX: "auto", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
           <thead>
@@ -150,7 +189,7 @@ export default function HandmatigInvoer() {
                   </td>
                 ))}
                 <td style={tdStyle}>
-                  <button onClick={() => setRijen(prev => prev.filter(r => r.id !== rij.id))}
+                  <button onClick={() => verwijderRij(rij.id)}
                     style={{ color: "#ef4444", cursor: "pointer", border: "none", background: "none", fontSize: "14px" }}>
                     x
                   </button>
@@ -161,19 +200,45 @@ export default function HandmatigInvoer() {
         </table>
       </div>
 
-      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-        <button onClick={() => setRijen(prev => [...prev, legeRij()])}
-          style={{ padding: "8px 16px", backgroundColor: "#f3f4f6", borderRadius: "8px", fontSize: "14px", cursor: "pointer", border: "none" }}>
-          + Rij toevoegen
-        </button>
-        <button onClick={opslaan}
-          style={{ padding: "8px 16px", backgroundColor: "#2563eb", color: "white", borderRadius: "8px", fontSize: "14px", cursor: "pointer", border: "none" }}>
-          Opslaan & bekijken
-        </button>
-        <span style={{ fontSize: "12px", color: "#9ca3af" }}>
-          {rijen.length} rijen · {zichtbareVelden.length} velden zichtbaar
-        </span>
-      </div>
+      <button onClick={voegRijToe}
+        style={{ alignSelf: "flex-start", padding: "8px 16px", backgroundColor: "#f3f4f6", borderRadius: "8px", fontSize: "14px", cursor: "pointer", border: "none" }}>
+        + Rij toevoegen
+      </button>
+
+      {/* Zwevende opslaan balk */}
+      {gewijzigd && (
+        <div style={{
+          position: "fixed", bottom: "24px", right: "24px",
+          display: "flex", gap: "8px", alignItems: "center",
+          backgroundColor: "white", padding: "12px 16px",
+          borderRadius: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+          border: "1px solid #e5e7eb", zIndex: 100
+        }}>
+          <span style={{ fontSize: "13px", color: "#6b7280" }}>
+            {aantalGeldig} applicaties · niet opgeslagen
+          </span>
+          <button onClick={annuleren}
+            style={{ padding: "6px 14px", borderRadius: "6px", fontSize: "13px", cursor: "pointer", border: "1px solid #e5e7eb", backgroundColor: "white" }}>
+            Annuleren
+          </button>
+          <button onClick={opslaan}
+            style={{ padding: "6px 14px", borderRadius: "6px", fontSize: "13px", cursor: "pointer", border: "none", backgroundColor: "#2563eb", color: "white", fontWeight: "500" }}>
+            Opslaan
+          </button>
+        </div>
+      )}
+
+      {/* Bevestiging */}
+      {opgeslagen && (
+        <div style={{
+          position: "fixed", bottom: "24px", right: "24px",
+          backgroundColor: "#16a34a", color: "white", padding: "12px 20px",
+          borderRadius: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+          fontSize: "13px", fontWeight: "500", zIndex: 100
+        }}>
+          {aantalGeldig} applicaties opgeslagen
+        </div>
+      )}
     </div>
   )
 }

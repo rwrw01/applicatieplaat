@@ -1,5 +1,5 @@
 "use client"
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 import type { ReactNode } from "react"
 import type { Applicatie, Instellingen } from "@/types"
 import { standaardApplicaties } from "./standaardData"
@@ -18,20 +18,60 @@ const defaultInstellingen: Instellingen = {
   ]
 }
 
+function laadUitStorage<T>(sleutel: string, standaard: T): T {
+  if (typeof window === "undefined") return standaard
+  try {
+    const opgeslagen = localStorage.getItem(sleutel)
+    return opgeslagen ? JSON.parse(opgeslagen) : standaard
+  } catch {
+    return standaard
+  }
+}
+
+function slaOpInStorage<T>(sleutel: string, waarde: T) {
+  if (typeof window === "undefined") return
+  try {
+    localStorage.setItem(sleutel, JSON.stringify(waarde))
+  } catch {
+    console.warn("localStorage opslaan mislukt")
+  }
+}
+
 interface StoreContextType {
   applicaties: Applicatie[]
   setApplicaties: (apps: Applicatie[]) => void
   instellingen: Instellingen
   setInstellingen: (i: Instellingen) => void
+  resetNaarStandaard: () => void
 }
 
 const StoreContext = createContext<StoreContextType | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [applicaties, setApplicaties] = useState<Applicatie[]>(standaardApplicaties)
-  const [instellingen, setInstellingen] = useState<Instellingen>(defaultInstellingen)
+  const [applicaties, setApplicatiesState] = useState<Applicatie[]>(() =>
+    laadUitStorage("applicaties", standaardApplicaties)
+  )
+  const [instellingen, setInstellingenState] = useState<Instellingen>(() =>
+    laadUitStorage("instellingen", defaultInstellingen)
+  )
+
+  function setApplicaties(apps: Applicatie[]) {
+    setApplicatiesState(apps)
+    slaOpInStorage("applicaties", apps)
+  }
+
+  function setInstellingen(i: Instellingen) {
+    setInstellingenState(i)
+    slaOpInStorage("instellingen", i)
+  }
+
+  function resetNaarStandaard() {
+    setApplicaties(standaardApplicaties)
+    setInstellingen(defaultInstellingen)
+  }
+
   return (
-    <StoreContext.Provider value={{ applicaties, setApplicaties, instellingen, setInstellingen }}>
+    <StoreContext.Provider value={{ applicaties, setApplicaties, instellingen, setInstellingen, resetNaarStandaard }}>
       {children}
     </StoreContext.Provider>
   )
@@ -43,7 +83,8 @@ export function useStore() {
     applicaties: standaardApplicaties,
     setApplicaties: () => {},
     instellingen: defaultInstellingen,
-    setInstellingen: () => {}
+    setInstellingen: () => {},
+    resetNaarStandaard: () => {}
   }
   return ctx
 }

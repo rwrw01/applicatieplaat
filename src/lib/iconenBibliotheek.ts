@@ -15,7 +15,7 @@ import type { ComponentType } from "react"
 
 export interface IcoonOptie {
   naam: string
-  type: "lucide" | "emoji"
+  type: "lucide" | "emoji" | "vlag"
   component?: ComponentType<{ size?: number; color?: string }>
   emoji?: string
   categorie: string
@@ -61,6 +61,7 @@ export const ICONEN: IcoonOptie[] = [
   { naam: "Archive",    type: "lucide", component: Archive,     categorie: "Algemeen" },
   { naam: "RefreshCw",  type: "lucide", component: RefreshCw,   categorie: "Algemeen" },
   { naam: "Settings",   type: "lucide", component: Settings,    categorie: "Algemeen" },
+  { naam: "Settings2",  type: "lucide", component: Settings2,   categorie: "Algemeen" },
   { naam: "Calendar",   type: "lucide", component: Calendar,    categorie: "Algemeen" },
   { naam: "Clock",      type: "lucide", component: Clock,       categorie: "Algemeen" },
   { naam: "Mail",       type: "lucide", component: Mail,        categorie: "Algemeen" },
@@ -71,18 +72,18 @@ export const ICONEN: IcoonOptie[] = [
   { naam: "BarChart",   type: "lucide", component: BarChart,    categorie: "Analyse" },
   { naam: "PieChart",   type: "lucide", component: PieChart,    categorie: "Analyse" },
 
-  // Vlaggen (emoji)
-  { naam: "🇳🇱 Nederland",     type: "emoji", emoji: "🇳🇱", categorie: "Vlaggen" },
-  { naam: "🇪🇺 Europa",        type: "emoji", emoji: "🇪🇺", categorie: "Vlaggen" },
-  { naam: "🇺🇸 Amerika",       type: "emoji", emoji: "🇺🇸", categorie: "Vlaggen" },
-  { naam: "🇬🇧 Verenigd Kon.", type: "emoji", emoji: "🇬🇧", categorie: "Vlaggen" },
-  { naam: "🇩🇪 Duitsland",     type: "emoji", emoji: "🇩🇪", categorie: "Vlaggen" },
-  { naam: "🇫🇷 Frankrijk",     type: "emoji", emoji: "🇫🇷", categorie: "Vlaggen" },
-  { naam: "🇧🇪 Belgie",        type: "emoji", emoji: "🇧🇪", categorie: "Vlaggen" },
-  { naam: "🇨🇭 Zwitserland",   type: "emoji", emoji: "🇨🇭", categorie: "Vlaggen" },
-  { naam: "🇸🇪 Zweden",        type: "emoji", emoji: "🇸🇪", categorie: "Vlaggen" },
-  { naam: "🇳🇴 Noorwegen",     type: "emoji", emoji: "🇳🇴", categorie: "Vlaggen" },
-  { naam: "🇩🇰 Denemarken",    type: "emoji", emoji: "🇩🇰", categorie: "Vlaggen" },
+  // Vlaggen
+  { naam: "Nederland",      type: "vlag", emoji: "nl", categorie: "Vlaggen" },
+  { naam: "Europa",         type: "vlag", emoji: "eu", categorie: "Vlaggen" },
+  { naam: "Amerika",        type: "vlag", emoji: "us", categorie: "Vlaggen" },
+  { naam: "Verenigd Kon.",  type: "vlag", emoji: "gb", categorie: "Vlaggen" },
+  { naam: "Duitsland",      type: "vlag", emoji: "de", categorie: "Vlaggen" },
+  { naam: "Frankrijk",      type: "vlag", emoji: "fr", categorie: "Vlaggen" },
+  { naam: "Belgie",         type: "vlag", emoji: "be", categorie: "Vlaggen" },
+  { naam: "Zwitserland",    type: "vlag", emoji: "ch", categorie: "Vlaggen" },
+  { naam: "Zweden",         type: "vlag", emoji: "se", categorie: "Vlaggen" },
+  { naam: "Noorwegen",      type: "vlag", emoji: "no", categorie: "Vlaggen" },
+  { naam: "Denemarken",     type: "vlag", emoji: "dk", categorie: "Vlaggen" },
 ]
 
 export function zoekIconen(query: string): IcoonOptie[] {
