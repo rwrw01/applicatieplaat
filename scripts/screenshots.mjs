@@ -65,10 +65,9 @@ async function metStandaardData(url, naam, acties = []) {
 // 2. Applicatieplaat (hoofdpagina met demo data)
 await metStandaardData('/', 'plaat.png')
 
-// 3. Applicatieplaat met open filterbalk
+// 3. Applicatieplaat met open filterpaneel
 await metStandaardData('/', 'plaat-filter.png', [
   async (page) => {
-    // Klik de filterknop (bevat "Filter" tekst of een funnel icoon)
     const filterBtn = page.locator('button').filter({ hasText: /filter/i }).first()
     if (await filterBtn.isVisible()) {
       await filterBtn.click()
@@ -76,13 +75,23 @@ await metStandaardData('/', 'plaat-filter.png', [
   }
 ])
 
-// 4. Data invoeren - CSV upload
+// 4. Toolbar met Niveau dropdown open
+await metStandaardData('/', 'plaat-toolbar.png', [
+  async (page) => {
+    const niveauBtn = page.locator('button').filter({ hasText: /niveau/i }).first()
+    if (await niveauBtn.isVisible()) {
+      await niveauBtn.click()
+    }
+  }
+])
+
+// 5. Data invoeren - CSV upload
 await metStandaardData('/invoer', 'invoer-csv.png')
 
-// 5. Instellingen
+// 6. Instellingen
 await metStandaardData('/instellingen', 'instellingen.png')
 
-// 6. Help pagina
+// 7. Help pagina
 await metStandaardData('/help', 'help.png')
 
 await browser.close()

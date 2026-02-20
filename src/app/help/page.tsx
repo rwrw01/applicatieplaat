@@ -162,18 +162,28 @@ const secties: Sectie[] = [
   {
     id: "applicatieplaat",
     titel: "De applicatieplaat",
-    zoekTekst: "applicatieplaat kaarten clusters overzicht weergave groepen organisatie statuskleur groen oranje rood kaart",
+    zoekTekst: "applicatieplaat kaarten clusters overzicht weergave groepen organisatie statuskleur groen oranje rood kaart toolbar niveau velden",
     inhoud: (
       <div>
         <p>De applicatieplaat toont alle applicaties als kaarten, gegroepeerd in <strong>clusters</strong> (subniveau). Optioneel kun je een <strong>hoofdniveau</strong> instellen voor een extra bovenliggende laag (bijv. per afdeling of domein).</p>
 
         <img src="/help/plaat.png" alt="Applicatieplaat overzicht" style={imgStijl} />
 
+        <p style={{ marginTop: 16 }}><strong>Toolbar</strong><br />Boven de plaat vind je vier knoppen:</p>
+        <ul style={{ paddingLeft: 20, lineHeight: 1.8, marginTop: 4 }}>
+          <li><strong>Niveau</strong> — kies het subniveau (clustergroepering) en optioneel een hoofdniveau (organisatielaag)</li>
+          <li><strong>Velden</strong> — schakel velden aan/uit op de applicatiekaart. Wijzigingen zijn direct zichtbaar</li>
+          <li><strong>Filter</strong> — open het filterpaneel om applicaties te filteren op veldwaarden</li>
+          <li><strong>Opslaan</strong> — exporteer als JSON-sessie, PNG, JPG of SVG</li>
+        </ul>
+
+        <img src="/help/plaat-toolbar.png" alt="Toolbar met Niveau en Velden menu" style={imgStijl} />
+
         <p style={{ marginTop: 16 }}><strong>Applicatiekaart</strong><br />Elke kaart toont:</p>
         <ul style={{ paddingLeft: 20, lineHeight: 1.8, marginTop: 4 }}>
           <li>De naam van de applicatie</li>
           <li>De ingestelde velden (maximaal 12)</li>
-          <li>Een gekleurde rand voor de statuskleur (groen / oranje / rood) indien geconfigureerd</li>
+          <li>Een gekleurde stip voor de statuskleur (groen / oranje / rood) indien geconfigureerd</li>
         </ul>
 
         <p style={{ marginTop: 12 }}><strong>Clusters</strong><br />Clusters zijn de groepen op het subniveau. Elke cluster heeft een eigen kleur (automatisch toegewezen). Het aantal applicaties per rij is instelbaar via Instellingen.</p>
@@ -182,59 +192,64 @@ const secties: Sectie[] = [
   },
   {
     id: "filterbalk",
-    titel: "Filterbalk",
+    titel: "Filter",
     zoekTekst: "filter filterbalk zoeken selectie checkboxes alles geen reset datum verlopen binnenkort actief badge tellen",
     inhoud: (
       <div>
-        <p>Open de filterbalk via de <strong>filterknop</strong> linksboven op de applicatieplaat. Het getal op de knop toont hoeveel filters actief zijn.</p>
+        <p>Open het filterpaneel via de <strong>Filter</strong>-knop in de toolbar. Het getal op de knop toont hoeveel filters actief zijn.</p>
 
-        <img src="/help/plaat-filter.png" alt="Applicatieplaat met open filterbalk" style={imgStijl} />
+        <img src="/help/plaat-filter.png" alt="Applicatieplaat met open filterpaneel" style={imgStijl} />
 
         <p style={{ marginTop: 16 }}><strong>Hoe werkt filteren?</strong></p>
         <ul style={{ paddingLeft: 20, lineHeight: 1.8, marginTop: 4 }}>
+          <li>Het filterpaneel toont alle velden met 2 of meer unieke waarden</li>
           <li>Gebruik de checkboxes om waarden aan of uit te zetten</li>
           <li>Klik <strong>Geen</strong> om alle opties voor een sectie te deselecteren, <strong>Alles</strong> om ze terug te zetten</li>
           <li>Meerdere filters combineren is mogelijk — alleen applicaties die aan alle filters voldoen worden getoond</li>
           <li>Klik op de sectietitel om een filtersectie in of uit te klappen</li>
         </ul>
 
-        <p style={{ marginTop: 12 }}><strong>Datumvelden</strong><br />Datumkolommen hebben drie speciale filteropties:</p>
+        <p style={{ marginTop: 12 }}><strong>Datumvelden</strong><br />Datumkolommen worden automatisch omgezet naar drie filteropties:</p>
         <ul style={{ paddingLeft: 20, lineHeight: 1.8, marginTop: 4 }}>
           <li><strong>Verlopen</strong> — aflooptermijn is verstreken</li>
           <li><strong>Binnenkort</strong> — verloopt binnen 90 dagen</li>
           <li><strong>Actief</strong> — geldig voor meer dan 90 dagen</li>
         </ul>
 
-        <p style={{ marginTop: 12 }}>Klik <strong>Reset</strong> bovenaan de filterbalk om alle filters in één keer te wissen.</p>
+        <p style={{ marginTop: 12 }}>Klik <strong>Reset</strong> bovenaan het filterpaneel om alle filters in één keer te wissen.</p>
       </div>
     ),
   },
   {
     id: "instellingen",
     titel: "Instellingen",
-    zoekTekst: "instellingen velden configureren toevoegen verwijderen volgorde type tekst datum icoon status mappings icoonmapping hierarchie subniveau hoofdniveau max apps rij opslaan",
+    zoekTekst: "instellingen velden configureren toevoegen verwijderen volgorde type tekst datum icoon status mappings icoonmapping max apps rij kaartbreedte kaarthoogte opslaan",
     inhoud: (
       <div>
-        <p>Via <strong>Instellingen</strong> pas je de weergave en velden aan.</p>
+        <p>Via <strong>Instellingen</strong> pas je de weergave en velddefinities aan.</p>
 
         <img src="/help/instellingen.png" alt="Instellingenpagina" style={imgStijl} />
 
         <p style={{ marginTop: 16 }}><strong>Weergave</strong></p>
         <ul style={{ paddingLeft: 20, lineHeight: 1.8, marginTop: 4 }}>
           <li><strong>Applicaties per rij</strong> — hoeveel kaarten naast elkaar per cluster (standaard: 6)</li>
-          <li><strong>Subniveaukolom</strong> — welke kolom de clustergroepering bepaalt</li>
-          <li><strong>Hoofdniveaukolom</strong> — welke kolom de bovenliggende groepering bepaalt (leeg = geen hoofdniveau)</li>
+          <li><strong>Kaartbreedte / Kaarthoogte</strong> — afmetingen van de applicatiekaart in pixels</li>
         </ul>
 
-        <p style={{ marginTop: 12 }}><strong>Velden op de applicatiekaart</strong></p>
+        <div style={{ marginTop: 12, padding: "10px 14px", backgroundColor: "#eff6ff", borderRadius: 8, borderLeft: "3px solid #3b82f6", fontSize: 13 }}>
+          <strong>Let op:</strong> Subniveau en hoofdniveau stel je in via de <strong>Niveau</strong>-knop in de toolbar op de applicatieplaat, niet in Instellingen.
+        </div>
+
+        <p style={{ marginTop: 16 }}><strong>Velden op de applicatiekaart</strong></p>
         <ul style={{ paddingLeft: 20, lineHeight: 1.8, marginTop: 4 }}>
-          <li>Maximaal 12 velden tegelijk zichtbaar</li>
+          <li>Maximaal 12 velden tegelijk</li>
+          <li>Gebruik de checkbox om een veld zichtbaar te maken (ook snel aan te passen via <strong>Velden</strong> in de toolbar)</li>
           <li>Gebruik de pijlknoppen om de volgorde te wijzigen</li>
-          <li>Zet het oogje aan/uit om een veld te tonen of te verbergen</li>
           <li>Stel per veld het <strong>type</strong> in: tekst, datum, icoon of status</li>
+          <li>Bij type <em>tekst</em> kun je de maximale lengte instellen (tekst wordt afgekapt)</li>
         </ul>
 
-        <p style={{ marginTop: 12 }}><strong>Icoon-mappings</strong><br />Voor velden van het type <em>icoon</em> kun je waarden koppelen aan een icoon en kleur. Zo verschijnt er een visueel symbool op de kaart in plaats van platte tekst.</p>
+        <p style={{ marginTop: 12 }}><strong>Icoon-mappings</strong><br />Voor velden van het type <em>icoon</em> kun je tot 3 waarden koppelen aan een icoon en kleur. Zo verschijnt er een visueel symbool op de kaart in plaats van platte tekst.</p>
 
         <p style={{ marginTop: 12 }}>Klik <strong>Opslaan</strong> om je wijzigingen door te voeren. Met <strong>Annuleren</strong> herstel je de vorige staat.</p>
       </div>
