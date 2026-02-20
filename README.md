@@ -1,41 +1,76 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Applicatieplaat
 
-## Getting Started
+Een interactieve webapplicatie voor het visualiseren van applicatielandschappen. Breng in kaart welke applicaties jouw organisatie gebruikt, hoe ze gegroepeerd zijn, en welke status ze hebben — alles overzichtelijk op een visuele plaat.
 
-First, run the development server:
+![Applicatieplaat](public/help/plaat.png)
+
+## Kenmerken
+
+- **Visuele applicatieplaat** — Applicaties worden getoond als kaarten, gegroepeerd in clusters (subniveau) en organisatieblokken (hoofdniveau)
+- **Flexibele velden** — Definieer zelf welke gegevens per applicatie worden getoond (status, leverancier, omgeving, datums, etc.)
+- **CSV-import** — Importeer applicatiegegevens uit CSV-bestanden met kolomkoppeling
+- **Filtering** — Filter op elke veldwaarde om specifieke applicaties te vinden
+- **Niveau-indeling** — Kies zelf welke kolom als cluster (subniveau) en als organisatie (hoofdniveau) wordt gebruikt
+- **Veld-zichtbaarheid** — Bepaal direct vanuit de toolbar welke velden op de kaarten zichtbaar zijn
+- **Sessies opslaan/laden** — Exporteer en importeer complete sessies als JSON-bestand
+- **PDF/PNG-export** — Sla de plaat op als afbeelding of PDF-document
+- **Icoonbibliotheek** — Wijs iconen en kleuren toe aan veldwaarden
+- **Volledig client-side** — Geen server of database nodig; alles draait in de browser
+
+## Snel starten
 
 ```bash
+# Installeer dependencies
+npm install
+
+# Start de ontwikkelserver
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in je browser. Kies op het welkomscherm voor **Standaardomgeving** om met voorbeelddata te starten, of importeer een eigen CSV of sessiebestand.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Projectstructuur
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+  app/                    # Next.js App Router pagina's
+    page.tsx              # Hoofdpagina (applicatieplaat)
+    invoer/               # Data-invoer (CSV upload, handmatig)
+    instellingen/         # Velddefinities en weergave-instellingen
+    help/                 # Documentatie en hulppagina
+  components/
+    applicatieplaat/      # Plaat, AppKaart, Cluster, Organisatie, FilterPanel, Legenda
+    instellingen/         # WeergaveSection, VeldRij, OpslaanBalk
+    invoer/               # CSVUpload, KolomMapping, SessionBeheer
+    layout/               # AppShell, Sidebar
+  lib/                    # Store, CSV-parser, hulpfuncties, standaarddata
+  types/                  # TypeScript types
+sample/                   # Voorbeelddata (CSV en JSON-sessie)
+scripts/                  # Screenshot-generatie (Playwright)
+```
 
-## Learn More
+## Tech stack
 
-To learn more about Next.js, take a look at the following resources:
+| | |
+|---|---|
+| Framework | [Next.js 16](https://nextjs.org) (App Router) |
+| UI | React 19, inline styles |
+| Taal | TypeScript |
+| CSV-parser | PapaParse |
+| Export | html-to-image, jsPDF |
+| Iconen | Lucide React |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Screenshots maken
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Voor de helppagina kunnen automatisch screenshots gegenereerd worden:
 
-## Deploy on Vercel
+```bash
+# Start eerst de dev server, daarna:
+npx node scripts/screenshots.mjs
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Dit vereist [Playwright](https://playwright.dev/) (`npm i playwright`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# applicatieplaat
-maken van mooie applicatieplaten
->>>>>>> c3b6c783dfa8999404310f330d52cf9239e104c2
+## Licentie
+
+[MIT](LICENSE) — Athide, NL
