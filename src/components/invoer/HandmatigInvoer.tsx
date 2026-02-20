@@ -167,6 +167,7 @@ export default function HandmatigInvoer() {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
           <thead>
             <tr style={{ backgroundColor: "#1f2937", color: "white" }}>
+              <th style={{ padding: "8px 12px", textAlign: "left", whiteSpace: "nowrap" }}>Cluster</th>
               {zichtbareVelden.map(v => (
                 <th key={v.id} style={{ padding: "8px 12px", textAlign: "left", whiteSpace: "nowrap" }}>
                   {v.label}
@@ -178,6 +179,11 @@ export default function HandmatigInvoer() {
           <tbody>
             {rijen.map(rij => (
               <tr key={rij.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                <td style={tdStyle}>
+                  <input style={inputStyle} type="text" value={rij.cluster}
+                    placeholder="Cluster"
+                    onChange={e => updateRij(rij.id, "cluster", e.target.value)} />
+                </td>
                 {zichtbareVelden.map(veld => (
                   <td key={veld.id} style={tdStyle}>
                     {renderInvoercel(

@@ -15,7 +15,7 @@ export const kleuren = [
   "#eab308","#6366f1","#ec4899",
 ]
 
-export default function Cluster({ naam, applicaties, kleur, maxPerRij = 6, velden }: Props) {
+export default function Cluster({ naam, applicaties, kleur, velden }: Props) {
   const borderColor = kleur ?? "#3b82f6"
 
   return (
@@ -29,7 +29,7 @@ export default function Cluster({ naam, applicaties, kleur, maxPerRij = 6, velde
       </h2>
       <div style={{
         display: "grid",
-        gridTemplateColumns: `repeat(${maxPerRij}, 160px)`,
+        gridTemplateColumns: `repeat(auto-fill, minmax(140px, 1fr))`,
         gap: "8px",
       }}>
         {applicaties.map(app => <AppKaart key={app.id} app={app} velden={velden} />)}

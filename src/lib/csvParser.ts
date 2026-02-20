@@ -1,5 +1,6 @@
 import Papa from 'papaparse'
 import type { Applicatie, VeldType } from '@/types'
+import { BOOL_WAAR } from './constants'
 
 export interface CSVAnalyse {
   headers: string[]
@@ -55,9 +56,7 @@ const STANDAARD_CONFIG: KolomConfig = {
 function parseWaarde(waarde: string, sleutel: string): unknown {
   const w = waarde.trim().toLowerCase()
   // Alleen 'saas' wordt als boolean opgeslagen; andere ja/nee-velden blijven string
-  if (sleutel === 'saas') {
-    return ['ja', 'true', '1', 'yes'].includes(w)
-  }
+  if (sleutel === 'saas') return BOOL_WAAR.has(w)
   return waarde.trim()
 }
 
@@ -75,14 +74,16 @@ export function parseCSV(file: File, config: KolomConfig = STANDAARD_CONFIG): Pr
               id: `app-${index}`,
               cluster:      row[clusterSleutel] ?? '',
               naam:         row[naamSleutel]    ?? '',
-              saas:         ['ja', 'true', '1', 'yes'].includes(row['saas']?.toLowerCase() ?? ''),
+              saas:         BOOL_WAAR.has(row['saas']?.toLowerCase() ?? ''),
               complexiteit: (row['complexiteit'] ?? 'laag') as Applicatie['complexiteit'],
               afloopDatum:  row['afloopDatum']  ?? '',
               omgeving:     (row['omgeving']    ?? 'client') as Applicatie['omgeving'],
               status:       (row['status']      ?? 'groen') as Applicatie['status'],
               leverancier:  row['leverancier']  ?? '',
             }
+            const VERBODEN_SLEUTELS = new Set(['__proto__', 'constructor', 'prototype'])
             for (const key of Object.keys(row)) {
+              if (VERBODEN_SLEUTELS.has(key)) continue
               if (key === clusterSleutel || key === naamSleutel) continue
               if (key in app && !kolomTypes[key]) continue
               app[key] = parseWaarde(row[key] ?? '', key)

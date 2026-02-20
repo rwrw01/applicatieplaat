@@ -25,6 +25,11 @@ export default function CSVUpload() {
   const [huidigBestand, setHuidigBestand] = useState<File | null>(null)
 
   async function verwerkBestand(file: File) {
+    if (file.size > 5 * 1024 * 1024) {
+      setFase('error')
+      setBericht('Bestand is te groot (max 5 MB)')
+      return
+    }
     try {
       const resultaat = await analyseCSV(file)
       if (resultaat.headers.length === 0) {

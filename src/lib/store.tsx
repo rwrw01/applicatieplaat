@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react"
 import type { ReactNode } from "react"
 import type { Applicatie, Instellingen } from "@/types"
 import { standaardApplicaties } from "./standaardData"
+import { STORAGE_KEYS } from "./constants"
 
 const defaultInstellingen: Instellingen = {
   maxAppsPerRij: 6,
@@ -21,7 +22,12 @@ function laadUitStorage<T>(sleutel: string, standaard: T): T {
   if (typeof window === "undefined") return standaard
   try {
     const opgeslagen = localStorage.getItem(sleutel)
-    return opgeslagen ? JSON.parse(opgeslagen) : standaard
+    if (!opgeslagen) return standaard
+    const parsed = JSON.parse(opgeslagen)
+    // Basisvalidatie: zelfde type als standaard (array vs object)
+    if (Array.isArray(standaard) !== Array.isArray(parsed)) return standaard
+    if (typeof parsed !== typeof standaard) return standaard
+    return parsed as T
   } catch {
     return standaard
   }
@@ -51,18 +57,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [instellingen, setInstellingenState] = useState<Instellingen>(defaultInstellingen)
 
   useEffect(() => {
-    setApplicatiesState(laadUitStorage("applicaties", standaardApplicaties))
-    setInstellingenState(laadUitStorage("instellingen", defaultInstellingen))
+    setApplicatiesState(laadUitStorage(STORAGE_KEYS.applicaties, standaardApplicaties))
+    setInstellingenState(laadUitStorage(STORAGE_KEYS.instellingen, defaultInstellingen))
   }, [])
 
   function setApplicaties(apps: Applicatie[]) {
     setApplicatiesState(apps)
-    slaOpInStorage("applicaties", apps)
+    slaOpInStorage(STORAGE_KEYS.applicaties, apps)
   }
 
   function setInstellingen(i: Instellingen) {
     setInstellingenState(i)
-    slaOpInStorage("instellingen", i)
+    slaOpInStorage(STORAGE_KEYS.instellingen, i)
   }
 
   function resetNaarStandaard() {

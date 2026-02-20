@@ -2,23 +2,11 @@ import type { Applicatie, VeldDefinitie } from "@/types"
 import { getIcoonOptie } from "@/lib/iconenBibliotheek"
 import { VlagIcoon } from "@/lib/vlaggen"
 import { Cloud, Server, Monitor, RefreshCw, CheckCircle, AlertTriangle, XCircle, Check, X } from "lucide-react"
+import { statusKleur, statusBg, statusTextKleur } from "@/lib/statusKleuren"
 
 interface Props {
   app: Applicatie
   velden: VeldDefinitie[]
-}
-
-const statusKleur: Record<string, string> = {
-  groen: "#22c55e", oranje: "#fb923c", rood: "#ef4444",
-  laag: "#22c55e",  midden: "#fb923c", hoog: "#ef4444",
-}
-const statusBg: Record<string, string> = {
-  groen: "#f0fdf4", oranje: "#fff7ed", rood: "#fef2f2",
-  laag: "#f0fdf4",  midden: "#fff7ed", hoog: "#fef2f2",
-}
-const statusTextKleur: Record<string, string> = {
-  groen: "#16a34a", oranje: "#ea580c", rood: "#dc2626",
-  laag: "#16a34a",  midden: "#ea580c", hoog: "#dc2626",
 }
 
 function getStandaardIcoon(waardeStr: string) {
@@ -139,7 +127,7 @@ export default function AppKaart({ app, velden }: Props) {
   return (
     <div style={{ backgroundColor: "white", borderRadius: "8px", border: "1px solid #e5e7eb",
       padding: "10px 12px", display: "flex", flexDirection: "column", gap: "6px",
-      minWidth: "140px", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+      boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "4px" }}>
         <span style={{ fontWeight: "600", fontSize: "12px", color: "#1f2937", lineHeight: "1.3" }} title={app.naam}>
           {naamTekst}
