@@ -1,9 +1,10 @@
 "use client"
 import { useState } from "react"
 import type { Applicatie, VeldDefinitie } from "@/types"
+import { getAppWaarde } from "@/lib/appUtils"
 
 export function getFilterWaarde(sleutel: string, app: Applicatie, veld?: VeldDefinitie): string {
-  const raw = (app as Record<string, unknown>)[sleutel]
+  const raw = getAppWaarde(app, sleutel)
   if (typeof raw === "boolean") return raw ? "Ja" : "Nee"
   if (veld?.type === "datum" && raw) {
     const datum = new Date(String(raw))
@@ -98,6 +99,7 @@ function FilterSectie({ label, waarden, geselecteerd, onChange }: FilterSectiePr
   )
 }
 
+
 interface Props {
   velden: VeldDefinitie[]
   applicaties: Applicatie[]
@@ -105,24 +107,23 @@ interface Props {
   onChange: (f: Record<string, string[]>) => void
   subniveauSleutel: string
   hoofdniveauSleutel?: string
+  alleSleutels: string[]
   onSluit: () => void
 }
 
-export default function FilterPanel({ velden, applicaties, filters, onChange, subniveauSleutel, hoofdniveauSleutel, onSluit }: Props) {
+export default function FilterPanel({ velden, applicaties, filters, onChange, subniveauSleutel, hoofdniveauSleutel, alleSleutels, onSluit }: Props) {
   const filterVelden: { sleutel: string; label: string; veld?: VeldDefinitie }[] = []
 
-  if (hoofdniveauSleutel && applicaties.some(a => (a as Record<string, unknown>)[hoofdniveauSleutel])) {
-    filterVelden.push({ sleutel: hoofdniveauSleutel, label: "Hoofdniveau" })
-  }
-  filterVelden.push({ sleutel: subniveauSleutel, label: "Subniveau" })
-  velden.filter(v => v.zichtbaar && v.sleutel !== "naam" && v.sleutel !== subniveauSleutel && v.sleutel !== hoofdniveauSleutel).forEach(v => {
-    filterVelden.push({ sleutel: v.sleutel, label: v.label, veld: v })
+  const uitgesloten = new Set(["naam", "id", subniveauSleutel, hoofdniveauSleutel].filter(Boolean) as string[])
+  alleSleutels.filter(k => !uitgesloten.has(k)).forEach(k => {
+    const veld = velden.find(v => v.sleutel === k)
+    filterVelden.push({ sleutel: k, label: veld?.label ?? k, veld })
   })
 
   const aantalActief = Object.values(filters).filter(a => a.length > 0).length
 
-  function reset() {
-    onChange({})
+  function labelVoorSleutel(sleutel: string) {
+    return velden.find(v => v.sleutel === sleutel)?.label ?? sleutel
   }
 
   return (
@@ -132,7 +133,7 @@ export default function FilterPanel({ velden, applicaties, filters, onChange, su
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
         padding: "12px 12px 10px", borderBottom: "1px solid #e5e7eb", flexShrink: 0 }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: "#1f2937" }}>
-          Filters
+          Filter
           {aantalActief > 0 && (
             <span style={{ marginLeft: 6, fontSize: 10, backgroundColor: "#2563eb", color: "white",
               borderRadius: 999, padding: "1px 6px", fontWeight: 700 }}>
@@ -142,7 +143,7 @@ export default function FilterPanel({ velden, applicaties, filters, onChange, su
         </span>
         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
           {aantalActief > 0 && (
-            <button onClick={reset}
+            <button onClick={() => onChange({})}
               style={{ fontSize: 11, color: "#2563eb", background: "none", border: "none",
                 cursor: "pointer", padding: 0, textDecoration: "underline" }}>
               Reset
@@ -156,8 +157,13 @@ export default function FilterPanel({ velden, applicaties, filters, onChange, su
         </div>
       </div>
 
-      {/* Secties */}
+      {/* Filter secties */}
       <div style={{ overflowY: "auto", flex: 1 }}>
+        {filterVelden.length > 0 && (
+          <div style={{ padding: "8px 12px 4px" }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#6b7280", letterSpacing: "0.05em" }}>FILTER</div>
+          </div>
+        )}
         {filterVelden.map(({ sleutel, label, veld }) => {
           const waarden = uniekeWaarden(applicaties, sleutel, veld)
           if (waarden.length <= 1) return null

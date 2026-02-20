@@ -3,8 +3,11 @@ import { useState, useEffect } from 'react'
 import { Menu } from 'lucide-react'
 import Sidebar from './Sidebar'
 import { BREEKPUNT_MOBIEL } from '@/lib/constants'
+import { useStore } from '@/lib/store'
+import WelkomScherm from '@/components/WelkomScherm'
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
+  const { nieuweSessie } = useStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -60,6 +63,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
+      {nieuweSessie && <WelkomScherm />}
       <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       <main style={{ flex: 1, overflow: 'auto', padding: '24px' }}>
         {children}

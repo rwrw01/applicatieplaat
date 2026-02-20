@@ -1,9 +1,8 @@
-﻿"use client"
-import { useState } from "react"
+"use client"
+import { useState, useEffect } from "react"
 import { useStore } from "@/lib/store"
 import type { VeldDefinitie, IcoonMapping, Instellingen } from "@/types"
 import WeergaveSection from "@/components/instellingen/WeergaveSection"
-import DataBeheerSection from "@/components/instellingen/DataBeheerSection"
 import VeldRij from "@/components/instellingen/VeldRij"
 import OpslaanBalk from "@/components/instellingen/OpslaanBalk"
 
@@ -14,11 +13,94 @@ const STANDAARD_MAPPINGS: IcoonMapping[] = [
   { waarde: "", icoon: "", kleur: "#ef4444" },
 ]
 
+function kapitaliseer(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+const vergrendeldRijStijl: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "40px 1fr 1fr 120px 100px 28px 40px",
+  gap: "8px", padding: "10px 12px", alignItems: "center",
+  border: "1px solid #e5e7eb", borderRadius: "8px",
+  backgroundColor: "#f3f4f6",
+}
+
+const vergrendeldTekstStijl: React.CSSProperties = {
+  fontSize: "12px", color: "#9ca3af", padding: "4px 0",
+}
+
 export default function InstellingenPage() {
-  const { instellingen, setInstellingen, resetNaarStandaard } = useStore()
-  const [lokaal, setLokaal] = useState<Instellingen>(instellingen)
+  const { instellingen, setInstellingen, applicaties } = useStore()
+
+  const [lokaal, setLokaal] = useState<Instellingen>(() => {
+    const bestaandeSleutelsLower = new Set(instellingen.velden.map(v => v.sleutel.toLowerCase()))
+    const uitgesloten = new Set(["id"])
+    const gezien = new Set<string>()
+    const extraVelden: VeldDefinitie[] = applicaties
+      .flatMap(a => Object.keys(a))
+      .filter(k => {
+        const lower = k.toLowerCase()
+        if (uitgesloten.has(lower)) return false
+        if (bestaandeSleutelsLower.has(lower)) return false
+        if (gezien.has(lower)) return false
+        gezien.add(lower)
+        return true
+      })
+      .sort()
+      .map(sleutel => ({
+        id: `auto_${sleutel}`,
+        label: kapitaliseer(sleutel),
+        sleutel,
+        type: "tekst" as const,
+        zichtbaar: false,
+        maxLengte: 20,
+      }))
+    return { ...instellingen, velden: [...instellingen.velden, ...extraVelden] }
+  })
+
+  // Hercan velden wanneer applicaties veranderen (bijv. na laden uit localStorage of CSV-upload)
+  useEffect(() => {
+    if (applicaties.length === 0) return
+    setLokaal(prev => {
+      const bestaandeSleutelsLower = new Set(prev.velden.map(v => v.sleutel.toLowerCase()))
+      const gezien = new Set<string>()
+      const extraVelden: VeldDefinitie[] = applicaties
+        .flatMap(a => Object.keys(a))
+        .filter(k => {
+          const lower = k.toLowerCase()
+          if (lower === "id") return false
+          if (bestaandeSleutelsLower.has(lower)) return false
+          if (gezien.has(lower)) return false
+          gezien.add(lower)
+          return true
+        })
+        .sort()
+        .map(sleutel => ({
+          id: `auto_${sleutel}`,
+          label: kapitaliseer(sleutel),
+          sleutel,
+          type: "tekst" as const,
+          zichtbaar: false,
+          maxLengte: 20,
+        }))
+      if (extraVelden.length === 0) return prev
+      return { ...prev, velden: [...prev.velden, ...extraVelden] }
+    })
+  }, [applicaties])
+
   const [opgeslagen, setOpgeslagen] = useState(false)
   const [gewijzigd, setGewijzigd] = useState(false)
+  const [dataPreviewOpen, setDataPreviewOpen] = useState(false)
+
+  // Sync lokaal met store wanneer instellingen veranderen (bijv. na laden uit localStorage)
+  useEffect(() => {
+    if (gewijzigd) return
+    setLokaal(prev => {
+      const opgeslagenSleutels = new Set(instellingen.velden.map(v => v.sleutel.toLowerCase()))
+      const extraVelden = prev.velden.filter(v => !opgeslagenSleutels.has(v.sleutel.toLowerCase()))
+      return { ...instellingen, velden: [...instellingen.velden, ...extraVelden] }
+    })
+  }, [instellingen, gewijzigd])
 
   const { velden, maxAppsPerRij } = lokaal
 
@@ -75,20 +157,11 @@ export default function InstellingenPage() {
     setTimeout(() => setOpgeslagen(false), 3000)
   }
 
-  function handleReset() {
-    if (window.confirm("Weet je het zeker? Alle data en instellingen worden gereset.")) {
-      resetNaarStandaard()
-      setLokaal(instellingen)
-      setGewijzigd(false)
-    }
-  }
-
   return (
     <div style={{ maxWidth: "960px", paddingBottom: "80px" }}>
       <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#1f2937", marginBottom: "24px" }}>Instellingen</h1>
 
-      <WeergaveSection maxAppsPerRij={maxAppsPerRij} subniveauSleutel={lokaal.subniveauSleutel} hoofdniveauSleutel={lokaal.hoofdniveauSleutel} velden={velden} onChange={updateLokaal} />
-      <DataBeheerSection onReset={handleReset} />
+      <WeergaveSection maxAppsPerRij={maxAppsPerRij} kaartBreedte={lokaal.kaartBreedte} kaartHoogte={lokaal.kaartHoogte} subniveauSleutel={lokaal.subniveauSleutel} hoofdniveauSleutel={lokaal.hoofdniveauSleutel} velden={velden} onChange={updateLokaal} />
 
       <div style={{ backgroundColor: "white", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "24px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
@@ -106,7 +179,61 @@ export default function InstellingenPage() {
             + Veld toevoegen
           </button>
         </div>
+
+        {applicaties.length > 0 && (
+          <div style={{ marginBottom: "12px" }}>
+            <button onClick={() => setDataPreviewOpen(o => !o)}
+              style={{ fontSize: "12px", color: "#2563eb", background: "none", border: "none",
+                cursor: "pointer", padding: 0, textDecoration: "underline" }}>
+              {dataPreviewOpen ? "Verberg" : "Toon"} voorbeeldrecord uit data
+            </button>
+            {dataPreviewOpen && (() => {
+              const voorbeeld = applicaties[0]
+              const entries = Object.entries(voorbeeld).filter(([k]) => k !== "id")
+              return (
+                <div style={{ marginTop: "8px", border: "1px solid #e5e7eb", borderRadius: "8px",
+                  overflow: "hidden", maxHeight: "240px", overflowY: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+                    <thead>
+                      <tr style={{ backgroundColor: "#f9fafb", position: "sticky", top: 0 }}>
+                        <th style={{ padding: "6px 12px", textAlign: "left", color: "#6b7280",
+                          fontWeight: 600, borderBottom: "1px solid #e5e7eb" }}>Sleutel</th>
+                        <th style={{ padding: "6px 12px", textAlign: "left", color: "#6b7280",
+                          fontWeight: 600, borderBottom: "1px solid #e5e7eb" }}>Waarde</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {entries.map(([sleutel, waarde]) => (
+                        <tr key={sleutel} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                          <td style={{ padding: "4px 12px", color: "#374151", fontFamily: "monospace",
+                            whiteSpace: "nowrap" }}>{sleutel}</td>
+                          <td style={{ padding: "4px 12px", color: "#6b7280",
+                            overflow: "hidden", textOverflow: "ellipsis", maxWidth: "400px" }}>
+                            {String(waarde ?? "")}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            })()}
+          </div>
+        )}
+
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {/* Vergrendeld subniveauveld */}
+          <div style={vergrendeldRijStijl} title="Subniveaukolom — aanpasbaar via Weergave-instellingen">
+            <input type="checkbox" checked disabled
+              style={{ width: "16px", height: "16px", cursor: "not-allowed", opacity: 0.5 }} />
+            <span style={vergrendeldTekstStijl}>{kapitaliseer(lokaal.subniveauSleutel)}</span>
+            <span style={vergrendeldTekstStijl}>{lokaal.subniveauSleutel}</span>
+            <span style={vergrendeldTekstStijl}>subniveau</span>
+            <span style={{ ...vergrendeldTekstStijl, fontSize: "11px" }}>n.v.t.</span>
+            <span />
+            <span style={{ textAlign: "center", fontSize: "13px", color: "#9ca3af" }}>🔒</span>
+          </div>
+
           {velden.map((veld, i) => (
             <VeldRij key={veld.id} veld={veld} index={i} totaal={velden.length}
               onUpdate={updateVeld} onVerwijder={verwijderVeld} onVerschuif={verschuifVeld}

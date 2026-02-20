@@ -24,17 +24,19 @@ export interface Applicatie {
   organisatie?: string
   cluster: string
   naam: string
-  saas: boolean
-  complexiteit: Complexiteit
-  afloopDatum: string
-  omgeving: Omgeving
-  status: Status
-  leverancier: string
+  saas?: boolean
+  complexiteit?: Complexiteit
+  afloopDatum?: string
+  omgeving?: Omgeving
+  status?: Status
+  leverancier?: string
   [key: string]: unknown
 }
 
 export interface Instellingen {
   maxAppsPerRij: number
+  kaartBreedte: number
+  kaartHoogte: number
   subniveauSleutel: string
   hoofdniveauSleutel?: string
   velden: VeldDefinitie[]

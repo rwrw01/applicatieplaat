@@ -1,14 +1,45 @@
-import type { Instellingen, VeldDefinitie } from "@/types"
+import type { Instellingen, VeldDefinitie, Applicatie } from "@/types"
+import AppKaart from "@/components/applicatieplaat/AppKaart"
+
+const VOORBEELD_WAARDEN: Record<string, string> = {
+  tekst: "Voorbeeldtekst",
+  datum: "2026-12-31",
+  status: "groen",
+  icoon: "ja",
+}
+
+function maakVoorbeeldApp(velden: VeldDefinitie[]): Applicatie {
+  const app: Applicatie = {
+    id: "voorbeeld",
+    cluster: "Voorbeeld",
+    naam: "Voorbeeld App",
+    saas: true,
+    complexiteit: "midden",
+    afloopDatum: "2026-12-31",
+    omgeving: "beide",
+    status: "groen",
+    leverancier: "Leverancier BV",
+    organisatie: "Organisatie",
+  }
+  for (const veld of velden) {
+    if (!(veld.sleutel in app) && veld.zichtbaar) {
+      app[veld.sleutel] = VOORBEELD_WAARDEN[veld.type] ?? veld.label
+    }
+  }
+  return app
+}
 
 interface Props {
   maxAppsPerRij: number
+  kaartBreedte: number
+  kaartHoogte: number
   subniveauSleutel: string
   hoofdniveauSleutel?: string
   velden: VeldDefinitie[]
   onChange: (w: Partial<Instellingen>) => void
 }
 
-export default function WeergaveSection({ maxAppsPerRij, subniveauSleutel, hoofdniveauSleutel, velden, onChange }: Props) {
+export default function WeergaveSection({ maxAppsPerRij, kaartBreedte, kaartHoogte, subniveauSleutel, hoofdniveauSleutel, velden, onChange }: Props) {
   const opties = [
     "cluster",
     ...velden.filter(v => v.sleutel && v.sleutel !== "naam").map(v => v.sleutel),
@@ -22,7 +53,8 @@ export default function WeergaveSection({ maxAppsPerRij, subniveauSleutel, hoofd
   return (
     <div style={{ backgroundColor: "white", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "24px", marginBottom: "24px" }}>
       <h2 style={{ fontWeight: "600", fontSize: "15px", color: "#374151", marginBottom: "16px" }}>Weergave</h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "480px" }}>
+      <div style={{ display: "flex", gap: "32px", alignItems: "flex-start", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: "1 1 320px", maxWidth: "480px" }}>
 
         {/* Max apps per rij */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -44,6 +76,32 @@ export default function WeergaveSection({ maxAppsPerRij, subniveauSleutel, hoofd
                 {n}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Kaartbreedte */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}>Breedte applicatiekaart</label>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <input type="range" min={120} max={240} step={10} value={kaartBreedte}
+              onChange={e => onChange({ kaartBreedte: Number(e.target.value) })}
+              style={{ flex: 1 }} />
+            <span style={{ fontSize: "18px", fontWeight: "700", color: "#2563eb", minWidth: "48px", textAlign: "center" }}>
+              {kaartBreedte}px
+            </span>
+          </div>
+        </div>
+
+        {/* Kaarthoogte */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}>Minimale hoogte applicatiekaart</label>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <input type="range" min={50} max={120} step={5} value={kaartHoogte}
+              onChange={e => onChange({ kaartHoogte: Number(e.target.value) })}
+              style={{ flex: 1 }} />
+            <span style={{ fontSize: "18px", fontWeight: "700", color: "#2563eb", minWidth: "48px", textAlign: "center" }}>
+              {kaartHoogte}px
+            </span>
           </div>
         </div>
 
@@ -71,6 +129,17 @@ export default function WeergaveSection({ maxAppsPerRij, subniveauSleutel, hoofd
             ))}
           </select>
         </div>
+
+      </div>
+
+      {/* Live preview */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
+        <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}>Voorbeeld kaart</label>
+        <div style={{ width: kaartBreedte, transition: "width 0.1s" }}>
+          <AppKaart app={maakVoorbeeldApp(velden)} velden={velden} kaartHoogte={kaartHoogte} />
+        </div>
+        <p style={{ fontSize: "11px", color: "#9ca3af", margin: 0 }}>{kaartBreedte} × {kaartHoogte}px</p>
+      </div>
 
       </div>
     </div>

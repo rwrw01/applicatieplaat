@@ -1,11 +1,12 @@
 'use client'
 import { useState } from 'react'
-import { Upload, Table } from 'lucide-react'
+import { Upload, Table, Save } from 'lucide-react'
 import clsx from 'clsx'
 import CSVUpload from '@/components/invoer/CSVUpload'
 import HandmatigInvoer from '@/components/invoer/HandmatigInvoer'
+import SessionBeheer from '@/components/invoer/SessionBeheer'
 
-type Tab = 'csv' | 'handmatig'
+type Tab = 'csv' | 'handmatig' | 'sessie'
 
 export default function InvoerPage() {
   const [actieveTab, setActieveTab] = useState<Tab>('csv')
@@ -36,8 +37,21 @@ export default function InvoerPage() {
         >
           <Table size={16} /> Handmatig invoeren
         </button>
+        <button
+          onClick={() => setActieveTab('sessie')}
+          className={clsx(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors',
+            actieveTab === 'sessie'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          )}
+        >
+          <Save size={16} /> Sessie down- en uploaden
+        </button>
       </div>
-      {actieveTab === 'csv' ? <CSVUpload /> : <HandmatigInvoer />}
+      {actieveTab === 'csv' && <CSVUpload />}
+      {actieveTab === 'handmatig' && <HandmatigInvoer />}
+      {actieveTab === 'sessie' && <SessionBeheer />}
     </div>
   )
 }

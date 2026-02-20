@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, PlusCircle, Settings, Menu } from "lucide-react"
+import { LayoutDashboard, PlusCircle, Settings, HelpCircle, Menu } from "lucide-react"
 
 interface SidebarProps {
   open: boolean
@@ -12,6 +12,7 @@ const navItems = [
   { href: "/",             label: "Applicatieplaat", icon: LayoutDashboard },
   { href: "/invoer",       label: "Data invoeren",   icon: PlusCircle },
   { href: "/instellingen", label: "Instellingen",    icon: Settings },
+  { href: "/help",         label: "Help",            icon: HelpCircle },
 ]
 
 export default function Sidebar({ open, onToggle }: SidebarProps) {

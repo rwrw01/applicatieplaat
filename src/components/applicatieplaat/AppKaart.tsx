@@ -1,4 +1,5 @@
 import type { Applicatie, VeldDefinitie } from "@/types"
+import { getAppWaarde } from "@/lib/appUtils"
 import { getIcoonOptie } from "@/lib/iconenBibliotheek"
 import { VlagIcoon } from "@/lib/vlaggen"
 import { Cloud, Server, Monitor, RefreshCw, CheckCircle, AlertTriangle, XCircle, Check, X } from "lucide-react"
@@ -7,6 +8,7 @@ import { statusKleur, statusBg, statusTextKleur } from "@/lib/statusKleuren"
 interface Props {
   app: Applicatie
   velden: VeldDefinitie[]
+  kaartHoogte: number
 }
 
 function getStandaardIcoon(waardeStr: string) {
@@ -38,7 +40,7 @@ function renderIcoonUitBibliotheek(naam: string, kleur: string, size = 11) {
 }
 
 function renderVeld(veld: VeldDefinitie, app: Applicatie) {
-  const waarde = app[veld.sleutel]
+  const waarde = getAppWaarde(app, veld.sleutel)
   if (waarde === undefined || waarde === null || waarde === "") return null
   const waardeStr = String(waarde)
 
@@ -115,7 +117,7 @@ function renderVeld(veld: VeldDefinitie, app: Applicatie) {
   return null
 }
 
-export default function AppKaart({ app, velden }: Props) {
+export default function AppKaart({ app, velden, kaartHoogte }: Props) {
   const zichtbareVelden = velden.filter(v => v.zichtbaar && v.sleutel !== "naam" && v.sleutel !== "status")
   const naamVeld = velden.find(v => v.sleutel === "naam")
   const statusVeld = velden.find(v => v.sleutel === "status" && v.zichtbaar)
@@ -127,16 +129,20 @@ export default function AppKaart({ app, velden }: Props) {
   return (
     <div style={{ backgroundColor: "white", borderRadius: "8px", border: "1px solid #e5e7eb",
       padding: "10px 12px", display: "flex", flexDirection: "column", gap: "6px",
-      boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+      boxShadow: "0 1px 2px rgba(0,0,0,0.05)", minHeight: kaartHoogte }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "4px" }}>
         <span style={{ fontWeight: "600", fontSize: "12px", color: "#1f2937", lineHeight: "1.3" }} title={app.naam}>
           {naamTekst}
         </span>
-        {statusVeld && (
-          <span style={{ width: "10px", height: "10px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
-            backgroundColor: statusKleur[app.status] ?? "#9ca3af" }}
-            title={`Status: ${app.status}`} />
-        )}
+        {statusVeld && (() => {
+          const sv = String(getAppWaarde(app, 'status') ?? '')
+          if (!sv) return null
+          return (
+            <span style={{ width: "10px", height: "10px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
+              backgroundColor: statusKleur[sv] ?? "#9ca3af" }}
+              title={`Status: ${sv}`} />
+          )
+        })()}
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "center" }}>
         {zichtbareVelden.map(veld => renderVeld(veld, app))}

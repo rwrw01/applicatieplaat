@@ -3,10 +3,18 @@ import { createContext, useContext, useState, useEffect } from "react"
 import type { ReactNode } from "react"
 import type { Applicatie, Instellingen } from "@/types"
 import { standaardApplicaties } from "./standaardData"
-import { STORAGE_KEYS } from "./constants"
+import { getOfMaakSessieId, ruimOudeSessiesOp } from "./sessie"
+
+const sessieId = typeof window !== "undefined" ? getOfMaakSessieId() : ""
+const STORAGE_KEYS = {
+  applicaties: `ap_${sessieId}_applicaties`,
+  instellingen: `ap_${sessieId}_instellingen`,
+}
 
 const defaultInstellingen: Instellingen = {
-  maxAppsPerRij: 6,
+  maxAppsPerRij: 3,
+  kaartBreedte: 160,
+  kaartHoogte: 66,
   subniveauSleutel: "cluster",
   velden: [
     { id: "v1", label: "Naam",         sleutel: "naam",         type: "tekst",  zichtbaar: true,  maxLengte: 20 },
@@ -49,6 +57,8 @@ interface StoreContextType {
   instellingen: Instellingen
   setInstellingen: (i: Instellingen) => void
   resetNaarStandaard: () => void
+  nieuweSessie: boolean
+  bevestigSessie: () => void
 }
 
 const StoreContext = createContext<StoreContextType | null>(null)
@@ -56,8 +66,32 @@ const StoreContext = createContext<StoreContextType | null>(null)
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [applicaties, setApplicatiesState] = useState<Applicatie[]>(standaardApplicaties)
   const [instellingen, setInstellingenState] = useState<Instellingen>(defaultInstellingen)
+  const [nieuweSessie, setNieuweSessie] = useState(false)
 
   useEffect(() => {
+    // Eenmalige migratie: oude vaste sleutels → namespace
+    if (!localStorage.getItem(STORAGE_KEYS.applicaties)) {
+      const oudeApps = localStorage.getItem("applicaties")
+      if (oudeApps) {
+        localStorage.setItem(STORAGE_KEYS.applicaties, oudeApps)
+        localStorage.removeItem("applicaties")
+      }
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.instellingen)) {
+      const oudeInst = localStorage.getItem("instellingen")
+      if (oudeInst) {
+        localStorage.setItem(STORAGE_KEYS.instellingen, oudeInst)
+        localStorage.removeItem("instellingen")
+      }
+    }
+    ruimOudeSessiesOp(sessieId)
+
+    const heeftData = !!localStorage.getItem(STORAGE_KEYS.applicaties)
+    if (!heeftData) {
+      setNieuweSessie(true)
+      return
+    }
+
     setApplicatiesState(laadUitStorage(STORAGE_KEYS.applicaties, standaardApplicaties))
     const opgeslagenInst = laadUitStorage(STORAGE_KEYS.instellingen, defaultInstellingen)
     const inst: Instellingen & Record<string, unknown> = { ...defaultInstellingen, ...opgeslagenInst }
@@ -84,8 +118,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setInstellingen(defaultInstellingen)
   }
 
+  function bevestigSessie() {
+    setNieuweSessie(false)
+  }
+
   return (
-    <StoreContext.Provider value={{ applicaties, setApplicaties, instellingen, setInstellingen, resetNaarStandaard }}>
+    <StoreContext.Provider value={{ applicaties, setApplicaties, instellingen, setInstellingen, resetNaarStandaard, nieuweSessie, bevestigSessie }}>
       {children}
     </StoreContext.Provider>
   )
@@ -98,7 +136,9 @@ export function useStore() {
     setApplicaties: () => {},
     instellingen: defaultInstellingen,
     setInstellingen: () => {},
-    resetNaarStandaard: () => {}
+    resetNaarStandaard: () => {},
+    nieuweSessie: false,
+    bevestigSessie: () => {},
   }
   return ctx
 }

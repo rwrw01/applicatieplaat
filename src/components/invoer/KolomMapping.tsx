@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import type { VeldDefinitie, VeldType } from '@/types'
 import type { CSVAnalyse, KolomConfig } from '@/lib/csvParser'
-import { detecteerType } from '@/lib/csvParser'
+import { detecteerType, INGEBOUWDE_SLEUTELS } from '@/lib/csvParser'
 
 const VELD_TYPES: VeldType[] = ['tekst', 'datum', 'icoon', 'status']
 
@@ -25,15 +25,18 @@ function initKolomStates(analyse: CSVAnalyse): KolomState[] {
   })
 }
 
+export type ImportModus = 'nieuw' | 'aanvullen'
+
 interface Props {
   analyse: CSVAnalyse
-  onImporteer: (config: KolomConfig, velden: VeldDefinitie[], hoofdniveauSleutel?: string) => void
+  onImporteer: (config: KolomConfig, velden: VeldDefinitie[], hoofdniveauSleutel?: string, modus?: ImportModus) => void
   onAnnuleer: () => void
 }
 
 export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props) {
   const [kolommen, setKolommen] = useState<KolomState[]>(() => initKolomStates(analyse))
   const [fout, setFout] = useState<string | null>(null)
+  const [modus, setModus] = useState<ImportModus>('nieuw')
 
   function updateKolom(index: number, wijziging: Partial<KolomState>) {
     setKolommen(prev => {
@@ -73,6 +76,12 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
       ...(hoofdniveauKolom ? { hoofdniveauSleutel: hoofdniveauKolom.header } : {}),
     }
 
+    // Gebruik de ingebouwde sleutelnaam als de kolomnaam (case-insensitive) overeenkomt
+    const ingebouwdMap = new Map([...INGEBOUWDE_SLEUTELS].map(s => [s.toLowerCase(), s]))
+    function bepaalSleutel(header: string): string {
+      return ingebouwdMap.get(header.toLowerCase()) ?? header
+    }
+
     const velden: VeldDefinitie[] = [
       { id: 'v-naam', label: naamKolom.header, sleutel: 'naam', type: 'tekst', zichtbaar: true, maxLengte: 20 },
       ...kolommen
@@ -80,14 +89,14 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
         .map((k, i) => ({
           id: `v-import-${i}`,
           label: k.header,
-          sleutel: k.header,
+          sleutel: bepaalSleutel(k.header),
           type: k.type,
           zichtbaar: true,
           ...(k.type === 'tekst' ? { maxLengte: 20 } : {}),
         } as VeldDefinitie)),
     ]
 
-    onImporteer(config, velden, hoofdniveauKolom?.header)
+    onImporteer(config, velden, hoofdniveauKolom?.header, modus)
   }
 
   const selectStyle: React.CSSProperties = {
@@ -167,6 +176,26 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
           {fout}
         </div>
       )}
+
+      <div style={{ padding: '12px 14px', backgroundColor: '#f9fafb', borderRadius: 8,
+        border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {(['nieuw', 'aanvullen'] as const).map(m => (
+          <label key={m} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
+            <input type="radio" name="importmodus" value={m} checked={modus === m}
+              onChange={() => setModus(m)} style={{ marginTop: 2, cursor: 'pointer' }} />
+            <span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#1f2937' }}>
+                {m === 'nieuw' ? 'Nieuw' : 'Aanvullen'}
+              </span>
+              <span style={{ fontSize: 12, color: '#6b7280', display: 'block' }}>
+                {m === 'nieuw'
+                  ? 'Overschrijft alle huidige applicaties en instellingen'
+                  : 'Behoudt huidige instellingen; voegt alleen nieuwe applicaties toe (op naam)'}
+              </span>
+            </span>
+          </label>
+        ))}
+      </div>
 
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
         <button onClick={onAnnuleer}

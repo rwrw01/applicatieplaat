@@ -1,20 +1,23 @@
 "use client"
 import { useState, useEffect } from "react"
 import { useStore } from "@/lib/store"
+import { getAppWaarde } from "@/lib/appUtils"
 import type { Applicatie, VeldDefinitie } from "@/types"
 
+function heeftSleutel(obj: Record<string, unknown>, sleutel: string): boolean {
+  if (sleutel in obj) return true
+  const lower = sleutel.toLowerCase()
+  return Object.keys(obj).some(k => k.toLowerCase() === lower)
+}
+
 function legeRij(velden: VeldDefinitie[], subniveauSleutel: string, hoofdniveauSleutel?: string): Applicatie {
-  const rij: Applicatie = {
-    id: crypto.randomUUID(),
-    cluster: "", naam: "", saas: false,
-    complexiteit: "laag", afloopDatum: "",
-    omgeving: "client", status: "groen", leverancier: "",
-  }
+  const rij: Applicatie = { id: crypto.randomUUID(), cluster: "", naam: "" }
   ;(rij as Record<string, unknown>)[subniveauSleutel] = ""
   if (hoofdniveauSleutel) (rij as Record<string, unknown>)[hoofdniveauSleutel] = ""
   velden.forEach(v => {
-    if (!(v.sleutel in rij)) {
-      (rij as Record<string, unknown>)[v.sleutel] = ""
+    if (!heeftSleutel(rij, v.sleutel)) {
+      const sl = v.sleutel.toLowerCase()
+      ;(rij as Record<string, unknown>)[v.sleutel] = sl === "saas" ? false : ""
     }
   })
   return rij
@@ -22,10 +25,10 @@ function legeRij(velden: VeldDefinitie[], subniveauSleutel: string, hoofdniveauS
 
 function vulRijAan(rij: Applicatie, velden: VeldDefinitie[], subniveauSleutel: string, hoofdniveauSleutel?: string): Applicatie {
   const bijgewerkt = { ...rij }
-  if (!(subniveauSleutel in bijgewerkt)) (bijgewerkt as Record<string, unknown>)[subniveauSleutel] = ""
-  if (hoofdniveauSleutel && !(hoofdniveauSleutel in bijgewerkt)) (bijgewerkt as Record<string, unknown>)[hoofdniveauSleutel] = ""
+  if (!heeftSleutel(bijgewerkt, subniveauSleutel)) (bijgewerkt as Record<string, unknown>)[subniveauSleutel] = ""
+  if (hoofdniveauSleutel && !heeftSleutel(bijgewerkt, hoofdniveauSleutel)) (bijgewerkt as Record<string, unknown>)[hoofdniveauSleutel] = ""
   velden.forEach(v => {
-    if (!(v.sleutel in bijgewerkt)) {
+    if (!heeftSleutel(bijgewerkt, v.sleutel)) {
       (bijgewerkt as Record<string, unknown>)[v.sleutel] = ""
     }
   })
@@ -38,9 +41,9 @@ function renderInvoercel(
   onChange: (waarde: unknown) => void,
   inputStyle: React.CSSProperties
 ) {
-  const sleutel = veld.sleutel
+  const sl = veld.sleutel.toLowerCase()
 
-  if (sleutel === "saas") {
+  if (sl === "saas") {
     return (
       <select style={inputStyle} value={waarde ? "ja" : "nee"} onChange={e => onChange(e.target.value === "ja")}>
         <option value="ja">Ja</option>
@@ -48,34 +51,37 @@ function renderInvoercel(
       </select>
     )
   }
-  if (sleutel === "complexiteit") {
+  if (sl === "complexiteit") {
     return (
-      <select style={inputStyle} value={String(waarde ?? "laag")} onChange={e => onChange(e.target.value)}>
+      <select style={inputStyle} value={String(waarde ?? "")} onChange={e => onChange(e.target.value)}>
+        <option value="">-- kies --</option>
         <option value="laag">Laag</option>
         <option value="midden">Midden</option>
         <option value="hoog">Hoog</option>
       </select>
     )
   }
-  if (sleutel === "omgeving") {
+  if (sl === "omgeving") {
     return (
-      <select style={inputStyle} value={String(waarde ?? "client")} onChange={e => onChange(e.target.value)}>
+      <select style={inputStyle} value={String(waarde ?? "")} onChange={e => onChange(e.target.value)}>
+        <option value="">-- kies --</option>
         <option value="client">Client</option>
         <option value="server">Server</option>
         <option value="beide">Beide</option>
       </select>
     )
   }
-  if (sleutel === "status") {
+  if (sl === "status") {
     return (
-      <select style={inputStyle} value={String(waarde ?? "groen")} onChange={e => onChange(e.target.value)}>
+      <select style={inputStyle} value={String(waarde ?? "")} onChange={e => onChange(e.target.value)}>
+        <option value="">-- kies --</option>
         <option value="groen">Groen</option>
         <option value="oranje">Oranje</option>
         <option value="rood">Rood</option>
       </select>
     )
   }
-  if (sleutel === "afloopDatum" || veld.type === "datum") {
+  if (sl === "afloopdatum" || veld.type === "datum") {
     return (
       <input style={inputStyle} type="date" value={String(waarde ?? "")}
         onChange={e => onChange(e.target.value)} />
@@ -188,14 +194,14 @@ export default function HandmatigInvoer() {
                 {hoofdniveauSleutel && (
                   <td style={tdStyle}>
                     <input style={inputStyle} type="text"
-                      value={String((rij as Record<string, unknown>)[hoofdniveauSleutel] ?? "")}
+                      value={String(getAppWaarde(rij, hoofdniveauSleutel) ?? "")}
                       placeholder={hoofdniveauSleutel}
                       onChange={e => updateRij(rij.id, hoofdniveauSleutel, e.target.value)} />
                   </td>
                 )}
                 <td style={tdStyle}>
                   <input style={inputStyle} type="text"
-                    value={String((rij as Record<string, unknown>)[subniveauSleutel] ?? "")}
+                    value={String(getAppWaarde(rij, subniveauSleutel) ?? "")}
                     placeholder={subniveauSleutel}
                     onChange={e => updateRij(rij.id, subniveauSleutel, e.target.value)} />
                 </td>
@@ -203,7 +209,7 @@ export default function HandmatigInvoer() {
                   <td key={veld.id} style={tdStyle}>
                     {renderInvoercel(
                       veld,
-                      (rij as Record<string, unknown>)[veld.sleutel],
+                      getAppWaarde(rij, veld.sleutel),
                       (waarde) => updateRij(rij.id, veld.sleutel, waarde),
                       inputStyle
                     )}

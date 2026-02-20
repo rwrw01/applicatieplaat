@@ -5,7 +5,7 @@ import { parseCSV, analyseCSV } from '@/lib/csvParser'
 import type { CSVAnalyse, KolomConfig } from '@/lib/csvParser'
 import { useStore } from '@/lib/store'
 import type { VeldDefinitie } from '@/types'
-import KolomMapping from './KolomMapping'
+import KolomMapping, { type ImportModus } from './KolomMapping'
 
 const BEKENDE_DEFAULTS: Record<string, string> = {
   organisatie: 'Organisatie A', cluster: 'Dienstverlening', naam: 'Applicatienaam', saas: 'ja',
@@ -16,7 +16,7 @@ const BEKENDE_DEFAULTS: Record<string, string> = {
 type Fase = 'idle' | 'mappen' | 'success' | 'error'
 
 export default function CSVUpload() {
-  const { setApplicaties, setInstellingen, instellingen } = useStore()
+  const { applicaties, setApplicaties, setInstellingen, instellingen } = useStore()
   const inputRef = useRef<HTMLInputElement>(null)
   const [fase, setFase] = useState<Fase>('idle')
   const [bericht, setBericht] = useState('')
@@ -46,18 +46,25 @@ export default function CSVUpload() {
     }
   }
 
-  async function handleImporteer(config: KolomConfig, velden: VeldDefinitie[], hoofdniveauSleutel?: string) {
+  async function handleImporteer(config: KolomConfig, velden: VeldDefinitie[], hoofdniveauSleutel?: string, modus: ImportModus = 'nieuw') {
     if (!huidigBestand) return
     try {
       const data = await parseCSV(huidigBestand, config)
-      setInstellingen({
-        ...instellingen, velden,
-        subniveauSleutel: config.subniveauSleutel,
-        hoofdniveauSleutel: hoofdniveauSleutel,
-      })
-      setApplicaties(data)
+      if (modus === 'nieuw') {
+        setInstellingen({
+          ...instellingen, velden,
+          subniveauSleutel: config.subniveauSleutel,
+          hoofdniveauSleutel: hoofdniveauSleutel,
+        })
+        setApplicaties(data)
+        setBericht(`${data.length} applicaties geladen en veldindeling bijgewerkt`)
+      } else {
+        const bestaandeNamen = new Set(applicaties.map(a => a.naam.toLowerCase()))
+        const nieuw = data.filter(a => !bestaandeNamen.has(a.naam.toLowerCase()))
+        setApplicaties([...applicaties, ...nieuw])
+        setBericht(`${nieuw.length} nieuwe applicaties toegevoegd (${data.length - nieuw.length} overgeslagen)`)
+      }
       setFase('success')
-      setBericht(`${data.length} applicaties geladen en veldindeling bijgewerkt`)
     } catch (e) {
       setFase('error')
       setBericht(e instanceof Error ? e.message : 'Fout bij verwerken van het bestand')
