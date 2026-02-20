@@ -63,7 +63,7 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
             Hergebruik met bronvermelding
           </p>
         ) : (
-          <span style={{ fontSize: "10px", color: "#4b5563" }}>MIT</span>
+          <span style={{ fontSize: "10px", color: "#4b5563" }}>Licentie</span>
         )}
       </div>
     </aside>
