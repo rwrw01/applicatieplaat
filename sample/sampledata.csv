@@ -1,0 +1,247 @@
+Applicatie;Cluster;Bedrijfskritisch;Type;Omvang;Levernacier;Type;Database;Cloud;In gebruik
+7Zip;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;Client;;On-premise;In gebruik
+AAG;Juridische Zaken ;Nee;Vakapplicatie;Groot;Bentis BV;Client;;On-premise;In gebruik
+Acrobat reader Pro;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;Client;;On-premise;In gebruik
+ADLIB Design / Archeologie;Omgevingsbeleid ;Nee;Vakapplicatie;klein;Adaptec;Client;MS-SQL;On-premise;In gebruik
+Adobe Reader;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;Client;;On-premise;In gebruik
+Alfresco;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;SoftwareHuis gemeente;Server;Postgress;On-premise;In gebruik
+Allegro;SMSR ;Ja;Vakapplicatie;Groot;Kred'it Informatietechnologie;Client/Server;;On-premise;In gebruik
+Alternatiff;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;;;On-premise;In gebruik
+Angular;Informatievoorziening ;Nee;Beheer en ontwikkeling;;;;;On-premise;In gebruik
+AppGroup Login (Intern);Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;SoftwareHuis gemeente;Server;MS-SQL;On-premise;In gebruik
+Appvolumes;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;MS-SQL;On-premise;In gebruik
+Archi;Informatievoorziening ;Nee;Vakapplicatie;klein;;Client;;On-premise;In gebruik
+Archief vernietigingscomponent;Informatievoorziening ;Nee;nvt;;;;;On-premise;Incompleet
+ATLAS.ti;NH Veilig ;Nee;Kantoorautomatisering (KA);klein;;Client;;On-premise;In gebruik
+Azure Web Application Proxy;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+Balie app;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Client/Server;;On-premise;In gebruik
+BBP (Beleids Bestuurlijke Planning);Bestuur en Communicatie ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Beheer verloren en gevonden voorwerpen;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;;Client;;On-premise;In gebruik
+Belastingdienst Aangifte;Financi?n ;Nee;Vakapplicatie;Klein;;Client;;On-premise;In gebruik
+Bentley MicroStation CONNECT;DIA ;Nee;Vakapplicatie;Klein;Bentley Systems Inc.;Client;;On-premise;In gebruik
+Bentley Open Cities Map;DIA ;Nee;Vakapplicatie;Groot;Bentley Systems Inc.;Client ;Oracle;On-premise;In gebruik
+BeveiligingsNET;Klantcontactcentrum ;Nee;Vakapplicatie;Klein;;Client;;On-premise;In gebruik
+Bezoekersparkeren beheer backoffice;VTH ;Nee;digitale dienstverlening;Groot;SoftwareHuis gemeente;Client/Server;;On-premise;In gebruik
+Bezoekersparkeren beheerformulier;VTH ;Nee;Backoffice dienstverlening;Klein;SoftwareHuis gemeente;Client/Server;;On-premise;In gebruik
+Bezoekersparkeren formulier;VTH ;Nee;digitale dienstverlening;klein;SoftwareHuis gemeente;Client/Server;;On-premise;In gebruik
+Bezoekersparkeren-app;VTH ;Nee;digitale dienstverlening;klein;SoftwareHuis gemeente;Client ;;On-premise;In gebruik
+BOA;VTH ;Nee;Vakapplicatie;klein;;;;On-premise;In gebruik
+Borland Database Engine;Informatievoorziening ;Nee;Database;Klein;;Server;;On-premise;In gebruik
+Camtasia;Bestuur en Communicatie ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Camunda;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Server;Postgress;On-premise;In gebruik
+Canon;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Client;;On-premise;In gebruik
+CAPICOM;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Client ;;On-premise;In gebruik
+CaPS;Veiligheid en Handhaving ;Nee;Vakapplicatie;Groot;ArgoNexus B.V.;Client ;;On-premise;In gebruik
+Cardexchange;Facilitaire Zaken ;Nee;Vakapplicatie;Groot;Aras Security;Server;;On-premise;In gebruik
+Check Point;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Commvault;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+crystal reports;Financi?n ;Nee;Vakapplicatie;Klein;;Client;;On-premise;In gebruik
+Cyclomedia Street Smart;DIA ;Nee;Vakapplicatie;klein;;Client;MS-SQL;On-premise;In gebruik
+DasWeb (Data Access Studio 8.0);Financi?n ;Nee;Kantoorautomatisering (KA);Klein;;Server;;On-premise;In gebruik
+data.gemeente.nl en dataintern.gemeente.nl;DIA ;Nee;digitale dienstverlening;Groot;;Server;;;
+Dell Wyse;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+Dezta plan;Omgevingsbeleid ;Nee;Vakapplicatie;Klein;;Client ;;On-premise;In gebruik
+dg Dialog BGT;DIA ;Ja;Vakapplicatie;Groot;;Client/Server;Oracle;On-premise;In gebruik
+DigiD SAML Connector;Klantcontactcentrum ;Nee;Beheer en ontwikkeling;Groot;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+DLR;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;;;On-premise;In gebruik
+Dotnet Framework;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;Microsoft B.V;;;On-premise;In gebruik
+Dpan Nazorg;Veiligheid en Handhaving ;Nee;Vakapplicatie;Klein;;Server;;On-premise;In gebruik
+Dragon;HRM ;Nee;Vakapplicatie;Klein;Mensys;Client;;On-premise;In gebruik
+Duxbury;OnBekend;Nee;Vakapplicatie;Klein;;Client;;On-premise;In gebruik
+Dymo Labelwriter;Facilitaire Zaken ;Nee;Vakapplicatie;Klein;;Client;;On-premise;In gebruik
+EASYCASH;Klantcontactcentrum ;Nee;Vakapplicatie;Klein;;Client ;MS-SQL;On-premise;In gebruik
+EBase / Verj.io;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;MYSQL;On-premise;In gebruik
+Edge Service Gateway;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+eFacturatie;Financi?n ;Nee;Vakapplicatie;Klein;SoftwareHuis gemeente;Server;Postgress;On-premise;In gebruik
+Elastic Search (opensource);Informatievoorziening ;Nee;Beheer en ontwikkeling;klein;;Server;;On-premise;In gebruik
+Enterprise Studio;Informatievoorziening ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Excel;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;;Client;;On-premise;In gebruik
+Exchange;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+ExTech;Facilitaire Zaken ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+EyeBase;DIA ;Nee;Vakapplicatie;Klein;;Client ;;On-premise;In gebruik
+Filecap;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;;Client ;;On-premise;In gebruik
+Filezilla;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;Client ;;On-premise;In gebruik
+Finnwood;VTH ;Nee;Vakapplicatie;Klein;;Client ;;On-premise;In gebruik
+FireFox;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;;Client ;;On-premise;In gebruik
+FME DESKTOP 2020;DIA ;Nee;Vakapplicatie;Groot;Vicrea;Client ;;On-premise;In gebruik
+FME server;DIA ;Nee;Vakapplicatie;Groot;Tensing GIS;Server;;On-premise;In gebruik
+Fonts;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+Formatiewijziging;HRM ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Forti Client;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Client ;;On-premise;In gebruik
+Fortimail;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Fortiweb;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Funderingsloket;ECDW ;Nee;Vakapplicatie;Klein;;Server;;On-premise;In gebruik
+G4Pro;DIA ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+GAAPP;Klantcontactcentrum ;Nee;Vakapplicatie;Klein;SoftwareHuis gemeente;Client/Server;;On-premise;Uitgefaseerd
+GBPro;DIA ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Geheimhouding;Klantcontactcentrum ;Nee;digitale dienstverlening;klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+GeoDMS;DIA ;Nee;Vakapplicatie;klein;;;;On-premise;In gebruik
+Geoserver;DIA ;Nee;Vakapplicatie;Groot;;Client/Server;;On-premise;In gebruik
+GeoVisia;DIA ;Nee;Vakapplicatie;Groot;DataQuint BV;Client/Server;Oracle;On-premise;In gebruik
+GFS;Financi?n ;Ja;Vakapplicatie;Groot;Cap Gemini Nederland B.V.;Client/Server;Oracle;On-premise;In gebruik
+Gimp;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;Client ;;On-premise;In gebruik
+GIRA QUAD;Facilitaire Zaken ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+G-Kas;Klantcontactcentrum ;Nee;Vakapplicatie;Groot;;Server;;On-premise;Uitgefaseerd
+GLASTA;VTH ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+GSA;Facilitaire Zaken ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+GWArchive Viewer;Informatievoorziening ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Handhaving (Intern);Veiligheid en Handhaving ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+HavenBeheerPakket;Veiligheid en Handhaving ;Nee;Vakapplicatie;;;;;On-premise;Uitgefaseerd
+Heidi SQL;Informatievoorziening ;Nee;Beheer en ontwikkeling;klein;;Client ;;On-premise;In gebruik
+HEIDIOS_70_v01;Informatievoorziening ;Nee;Beheer en ontwikkeling;klein;;Client ;;On-premise;In gebruik
+Host app;Klantcontactcentrum ;Nee;Beheer en ontwikkeling;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Huwelijkscontract;Klantcontactcentrum ;Nee;Vakapplicatie;Klein;;Server;;On-premise;In gebruik
+Huwelijksplanner Beheer;Klantcontactcentrum ;Nee;Vakapplicatie;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+IBANC;Financi?n ;Nee;Vakapplicatie;Groot;;;;On-premise;In gebruik
+IBM Analyst notebook;RIEC ;Nee;Vakapplicatie;Klein;IBM;;;On-premise;In gebruik
+Identificatie balie;Klantcontactcentrum ;Nee;Beheer en ontwikkeling;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Identity Manager;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+IDU;HRM ;Ja;Beheer en ontwikkeling;Groot;SoftwareHuis gemeente;Server;MYSQL;On-premise;In gebruik
+INEX;Facilitaire Zaken ;Nee;Vakapplicatie;Klein;Aras Security;;;On-premise;In gebruik
+IntelliJ;Informatievoorziening ;Nee;Beheer en ontwikkeling;klein;;Client;;On-premise;In gebruik
+Internet Explorer;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;Microsoft B.V;Client ;;On-premise;In gebruik
+IPP;OH DIA ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;Postgress;On-premise;In gebruik
+ISS G11;Klantcontactcentrum ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+IVR;Veiligheid en Handhaving ;Nee;Vakapplicatie;Groot;;Server;;On-premise;In gebruik
+Java Runtime;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;;;On-premise;In gebruik
+JCC Betalen;Klantcontactcentrum ;Nee;Vakapplicatie;Groot;JCC Software B.V.;;;On-premise;In gebruik
+Juridische Bibliotheek;Juridische Zaken ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+KeePass;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;Client ;;On-premise;In gebruik
+Kennisbank HBO;Klantcontactcentrum ;Nee;Vakapplicatie;Klein;;;;On-premise;
+Key2bm;Werk en Inkomen ;Nee;Vakapplicatie;Klein;Centric;Server;;On-premise;In gebruik
+Klein evenement;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Klic-Viewer;DIA ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Kofax Capture;Informatievoorziening ;Nee;Vakapplicatie;Groot;;Server;MS-SQL;On-premise;In gebruik
+Leica Infinity;DIA ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Liaan HB;Werk en Inkomen ;Nee;Vakapplicatie;Groot;;Client/Server;;On-premise;In gebruik
+Liaan IB;Werk en Inkomen ;Nee;Vakapplicatie;Groot;;Client/Server;;On-premise;In gebruik
+LIAS;Financi?n ;Nee;Vakapplicatie;Groot;;Client/Server;Oracle;On-premise;In gebruik
+Life Cycle Management;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Load Balancer;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Log Insight;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+LVBA;Havendienst ;Nee;Vakapplicatie;Groot;SoftwareHuis gemeente;Server;Postgress;On-premise;In gebruik
+Lynxx Parkeerrechten database;Veiligheid en Handhaving ;Nee;Beheer en ontwikkeling;;;;;On-premise;Uitgefaseerd
+Mapgallery;DIA ;Nee;Vakapplicatie;Klein;;Server;;On-premise;In gebruik
+Microsoft Edge;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;Microsoft B.V;Client ;;On-premise;In gebruik
+Microsoft SQL 2012 native client ODBC MySql;Informatievoorziening ;Nee;Database;Klein;Microsoft B.V;Client ;;On-premise;In gebruik
+Microsoft Visual C++ Redistributables 2010;Informatievoorziening ;Nee;Beheer en ontwikkeling;klein;Microsoft B.V;;;On-premise;In gebruik
+Mijngemeente;Klantcontactcentrum ;Nee;digitale dienstverlening;Groot;SoftwareHuis gemeente;Server;;;
+MijnHuwelijk;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Mitel;Klantcontactcentrum ;Nee;Beheer en ontwikkeling;Groot;;Server;MS-SQL;On-premise;In gebruik
+MobaXterm;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;;;On-premise;In gebruik
+Mobi Maestro;BBOR ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Mobiele Apparaten (intern);Informatievoorziening ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+MOR+;Klantcontactcentrum ;Ja;Vakapplicatie;Groot;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+MorMeldingen (loket);Klantcontactcentrum ;Nee;digitale dienstverlening;Groot;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+MOVE3;DIA ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+MySQL;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;Oracle Corporation;Server;;On-premise;In gebruik
+Naamgebruik veranderen;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+NetVitesse Unilogon IP Phone Single Sign-on;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+Neuron Integratieplatform (NIP) (vh Neuron Gegevensmagazijn);DIA ;Nee;Vakapplicatie;Groot;Vicrea;Server;Oracle;On-premise;In gebruik
+Neuron Stelselregistratie BAG;DIA ;Ja;Vakapplicatie;Groot;Vicrea;Server;Oracle;On-premise;In gebruik
+Neuron Stelselregistratie BAG (komt dubbel voor A00504);DIA ;Ja;Vakapplicatie;Groot;Vicrea;;;On-premise;Vervangen
+Neuron Stroomlijn;DIA ;Nee;Vakapplicatie;Groot;Vicrea;Server;;On-premise;In gebruik
+Notepad ++;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Client ;;On-premise;In gebruik
+NSX;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Object Informatie;Project- en contractman ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Oce DocWorks;Facilitaire Zaken ;Nee;Vakapplicatie;Groot;;;;On-premise;In gebruik
+OceViewStation;Facilitaire Zaken ;Nee;Vakapplicatie;Groot;;;;On-premise;
+Office 365;Informatievoorziening ;Ja;Kantoorautomatisering (KA);Groot;Microsoft B.V;;;On-premise;In gebruik
+OfficeScan;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;;;On-premise;In gebruik
+Omgevingsrapportage;Project- en contractman ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Online geboorteaangifte;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;Offline
+Ontheffing Straatoptredens;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;Uitgefaseerd
+Open Office Writer;Klantcontactcentrum ;Nee;Kantoorautomatisering (KA);Klein;;Client ;;On-premise;In gebruik
+OpenZaak;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;Postgress;On-premise;In gebruik
+Oracle;Informatievoorziening ;Nee;Database;Groot;Oracle Corporation;Server;;On-premise;In gebruik
+Oracle 12c Instant Client 64-Bit;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;Oracle Corporation;;;On-premise;In gebruik
+Orchestra;Klantcontactcentrum ;Nee;Vakapplicatie;Groot;Qmatic;Server;MS-SQL;On-premise;In gebruik
+OSV;Klantcontactcentrum ;Ja;Vakapplicatie;Groot;;Server;;On-premise;In gebruik
+Outlook;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;Microsoft B.V;Client ;;On-premise;In gebruik
+OWS;Klantcontactcentrum ;Nee;Vakapplicatie;Klein;Ortec bv;;;On-premise;In gebruik
+Packman;Financi?n ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+Panorama Viewer;DIA ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Parkeervergunning;Veiligheid en Handhaving ;Nee;digitale dienstverlening;;SoftwareHuis gemeente;;;On-premise;Uitgefaseerd
+PDF Xchange Viewer;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;Circle Software Group B.V.;Client ;;On-premise;In gebruik
+PDFXchangePro;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;;Client ;;On-premise;In gebruik
+pgAdmin III (PGADMIN 1.18.1 );Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Client ;;On-premise;In gebruik
+Photoshop;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;Client ;;On-premise;In gebruik
+PIWIK/Matomo;Bestuur en Communicatie ;Nee;Vakapplicatie;Klein;;Server;MYSQL;On-premise;In gebruik
+PKI.gemeente.NL;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;;
+Pluraview;DIA ;Nee;Vakapplicatie;klein;;;;On-premise;In gebruik
+Pricing;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;Vervangen
+ProBev;Klantcontactcentrum ;Nee;Vakapplicatie;Groot;Procura;Server;Oracle;On-premise;In gebruik
+Project;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;;Client ;;On-premise;In gebruik
+ProWeb (VrijBRP);Klantcontactcentrum ;Ja;Vakapplicatie;Groot;Procura;Server;Oracle / Postgress;On-premise;In gebruik
+Putty;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Client ;;On-premise;In gebruik
+QGIS;DIA ;Nee;Vakapplicatie;Groot;;Client ;;On-premise;In gebruik
+QlikSense;DIA ;Nee;Vakapplicatie;Groot;Qlik Tech Nederlands bv;Server;;On-premise;In gebruik
+Qlikview;DIA ;Nee;Vakapplicatie;Groot;Qlik Tech Nederlands bv;Server;;On-premise;In gebruik
+RAAS Backoffice;Klantcontactcentrum ;Nee;Vakapplicatie;Groot;;;;On-premise;In gebruik
+RAAS Frontoffice;Klantcontactcentrum ;Nee;Vakapplicatie;Groot;;;;On-premise;In gebruik
+RDW InfoRM;Veiligheid en Handhaving ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Redhat linux;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Regiebord KCC;Klantcontactcentrum ;Nee;Vakapplicatie;Groot;;;MS-SQL;On-premise;In gebruik
+RoPlan;DIA ;Nee;Vakapplicatie;Klein;Visma Roxit;;;On-premise;In gebruik
+Sccm Remotecontrol;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;Microsoft B.V;;;On-premise;In gebruik
+Select Tool VNG;Informatievoorziening ;Nee;Vakapplicatie;Klein;;Client ;;On-premise;In gebruik
+Sentinel Driver 7.6.5;DIA ;Nee;Database;Klein;;;;On-premise;In gebruik
+SIMS Client;Facilitaire Zaken ;Nee;Vakapplicatie;Groot;Aras Security;Client ;MS-SQL;On-premise;In gebruik
+SIMS Web;Facilitaire Zaken ;Nee;Vakapplicatie;Groot;Aras Security;Client ;MS-SQL;On-premise;In gebruik
+Sleutelkast / Commander connect;Veiligheid en Handhaving ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Smart Documents;Werk en Inkomen ;Nee;Vakapplicatie;Groot;;Client/Server;;On-premise;In gebruik
+Smart Editor;Werk en Inkomen ;Nee;Kantoorautomatisering (KA);Groot;;Client ;;On-premise;In gebruik
+Sonarqube;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+Springboot;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;;;On-premise;In gebruik
+SPSS 20 Base;DIA ;Nee;Vakapplicatie;Klein;IBM;;;On-premise;In gebruik
+SPSS 20 Legacy Viewer;DIA ;Nee;Vakapplicatie;Klein;IBM;;;On-premise;In gebruik
+SQL Developer;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;Oracle Corporation;Client ;;On-premise;In gebruik
+SQL Native Client;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;Microsoft B.V;Client ;;On-premise;In gebruik
+Sql Server Management Studio;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;Microsoft B.V;Client ;;On-premise;In gebruik
+SquitXo;VTH ;Nee;nvt;;;;;On-premise;Uitgefaseerd
+Suite voor het Sociaal Domein;Werk en Inkomen ;Ja;Vakapplicatie;Groot;Centric;Server;Oracle;On-premise;In gebruik
+Summit Evolution;DIA ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+Swing (win en manager);DIA ;Nee;Vakapplicatie;Klein;ABF Research;;;On-premise;In gebruik
+Tesselaar Suite;ECDW ;Nee;Vakapplicatie;Klein;;;;On-premise;In gebruik
+TOAD for Oracle;Informatievoorziening ;Nee;Database;Klein;Quest Software;Client ;;On-premise;In gebruik
+Toolkit;Klantcontactcentrum ;Nee;digitale dienstverlening;Groot;SoftwareHuis gemeente;Server;Postgress;On-premise;In gebruik
+TOPdesk;Informatievoorziening ;Ja;Vakapplicatie;Groot;TOPdesk;Server;MS-SQL;On-premise;In gebruik
+Trend Micro Deep Security;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Client;MS-SQL;On-premise;In gebruik
+Uipath Assistant;Financi?n ;Nee;Vakapplicatie;Klein;;Client ;;On-premise;In gebruik
+Uitvaartsuite;Begraafplaatsen ;Nee;Vakapplicatie;Groot;;;;On-premise;In gebruik
+Unified Access Gateway;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Vabi Assets Energie voor Gemeente;Vastgoed ;Nee;Vakapplicatie;Klein;;Client ;;On-premise;In gebruik
+vCenter;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+Verseon;Informatievoorziening ;Ja;Vakapplicatie;Groot;Circle Software Group B.V.;Client/Server;Oracle;On-premise;In gebruik
+Visio;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Klein;Microsoft B.V;Client ;;On-premise;In gebruik
+VisualCPlusPlus;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;Microsoft B.V;;;On-premise;In gebruik
+VMWARE Horizon View Client;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;VMware;Client ;;On-premise;In gebruik
+vRealize Automation;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Server;;On-premise;In gebruik
+vRealize Operations;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;server;;On-premise;In gebruik
+VVH Roosterwijziging;Veiligheid en Handhaving ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier aanvraag bijstandsuitkering;Werk en Inkomen ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier afspraak maken;Klantcontactcentrum ;Nee;digitale dienstverlening;Groot;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier Akteaanvragen;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier Bijzondere Bijstand;Werk en Inkomen ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier Huwelijk Plannen;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier ligplaatsen;Havendienst ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier Minimaregelingen;SMSR ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier Periodieke Verklaring;SMSR ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier Schuldhulpverlening;SMSR ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Webformulier uittreksel aanvragen;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;;
+Webformulier Verhuizing Doorgeven;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Windows 2022;Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;;Server;;On-premise;In gebruik
+WinSCP;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;;Client ;;On-premise;In gebruik
+WMO Melding;Werk en Inkomen ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;;;On-premise;In gebruik
+Word;Informatievoorziening ;Nee;Kantoorautomatisering (KA);Groot;Microsoft B.V;Client ;;On-premise;In gebruik
+Work en Move;HRM ;Nee;Kantoorautomatisering (KA);Klein;;Client ;;On-premise;In gebruik
+WVG Woonvoorziening;Maatschappelijke On ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;MS-SQL;On-premise;In gebruik
+Zaak type catalogus;Informatievoorziening ;Nee;Beheer en ontwikkeling;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Zaakmagazijn;Klantcontactcentrum ;Nee;Beheer en ontwikkeling;Groot;;Server;Postgress;On-premise;In gebruik
+Zakenmagazijn (ZRC);Informatievoorziening ;Nee;Beheer en ontwikkeling;Groot;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+Zelfbedieningsbalie;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;SoftwareHuis gemeente;Server;;On-premise;In gebruik
+ZevaOpvragen;Werk en Inkomen ;Nee;Vakapplicatie;Klein;;Server;;On-premise;In gebruik
+Zorgmail;Informatievoorziening ;Nee;Vakapplicatie;Groot;;Server;;On-premise;In gebruik
+ZTC;Klantcontactcentrum ;Nee;Beheer en ontwikkeling;Groot;;Server;Postgress;On-premise;In gebruik
+Zuil publiekshal;Klantcontactcentrum ;Nee;digitale dienstverlening;Klein;;Server;;On-premise;In gebruik
+Zynyo;Informatievoorziening ;Nee;Vakapplicatie;Klein;;Server;Postgress;On-premise;In gebruik

@@ -1,7 +1,7 @@
 import type { Applicatie, VeldDefinitie } from "@/types"
 import { getIcoonOptie } from "@/lib/iconenBibliotheek"
 import { VlagIcoon } from "@/lib/vlaggen"
-import { Cloud, Server, Monitor, RefreshCw, CheckCircle, AlertTriangle, XCircle } from "lucide-react"
+import { Cloud, Server, Monitor, RefreshCw, CheckCircle, AlertTriangle, XCircle, Check, X } from "lucide-react"
 
 interface Props {
   app: Applicatie
@@ -28,6 +28,10 @@ function getStandaardIcoon(waardeStr: string) {
     case "client": return { icoon: <Monitor size={11} />,   label: "Client",  kleur: "#7e22ce", bg: "#faf5ff" }
     case "server": return { icoon: <Server size={11} />,    label: "Server",  kleur: "#1e40af", bg: "#eff6ff" }
     case "beide":  return { icoon: <RefreshCw size={11} />, label: "Beide",   kleur: "#065f46", bg: "#f0fdf4" }
+    case "ja": case "yes": case "1":
+      return { icoon: <Check size={11} />, label: "Ja", kleur: "#16a34a", bg: "#f0fdf4" }
+    case "nee": case "no": case "0":
+      return { icoon: <X size={11} />,     label: "Nee", kleur: "#9ca3af", bg: "#f9fafb" }
     default: return null
   }
 }
@@ -135,7 +139,7 @@ export default function AppKaart({ app, velden }: Props) {
   return (
     <div style={{ backgroundColor: "white", borderRadius: "8px", border: "1px solid #e5e7eb",
       padding: "10px 12px", display: "flex", flexDirection: "column", gap: "6px",
-      minWidth: "140px", maxWidth: "200px", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+      minWidth: "140px", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "4px" }}>
         <span style={{ fontWeight: "600", fontSize: "12px", color: "#1f2937", lineHeight: "1.3" }} title={app.naam}>
           {naamTekst}
@@ -146,7 +150,7 @@ export default function AppKaart({ app, velden }: Props) {
             title={`Status: ${app.status}`} />
         )}
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "center" }}>
         {zichtbareVelden.map(veld => renderVeld(veld, app))}
       </div>
     </div>

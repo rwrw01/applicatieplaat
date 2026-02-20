@@ -1,60 +1,195 @@
-"use client"
-import { useRef, useState } from "react"
-import { parseCSV } from "@/lib/csvParser"
-import { useStore } from "@/lib/store"
+'use client'
+import { useRef, useState } from 'react'
+import { Upload, CheckCircle, AlertCircle, Download } from 'lucide-react'
+import { parseCSV, analyseCSV } from '@/lib/csvParser'
+import type { CSVAnalyse, KolomConfig } from '@/lib/csvParser'
+import { useStore } from '@/lib/store'
+import type { VeldDefinitie } from '@/types'
+import KolomMapping from './KolomMapping'
+
+const BEKENDE_DEFAULTS: Record<string, string> = {
+  cluster: 'Dienstverlening', naam: 'Applicatienaam', saas: 'ja',
+  complexiteit: 'laag', afloopDatum: '2026-12-31', omgeving: 'client',
+  status: 'groen', leverancier: 'Leverancier BV',
+}
+
+type Fase = 'idle' | 'mappen' | 'success' | 'error'
 
 export default function CSVUpload() {
-  const { setApplicaties } = useStore()
+  const { setApplicaties, setInstellingen, instellingen } = useStore()
   const inputRef = useRef<HTMLInputElement>(null)
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
-  const [bericht, setBericht] = useState("")
+  const [fase, setFase] = useState<Fase>('idle')
+  const [bericht, setBericht] = useState('')
+  const [dragging, setDragging] = useState(false)
+  const [analyse, setAnalyse] = useState<CSVAnalyse | null>(null)
+  const [huidigBestand, setHuidigBestand] = useState<File | null>(null)
 
   async function verwerkBestand(file: File) {
     try {
-      const data = await parseCSV(file)
-      setApplicaties(data)
-      setStatus("success")
-      setBericht(`${data.length} applicaties geladen uit ${file.name}`)
-    } catch {
-      setStatus("error")
-      setBericht("Fout bij verwerken van het bestand.")
+      const resultaat = await analyseCSV(file)
+      if (resultaat.headers.length === 0) {
+        setFase('error')
+        setBericht('Het bestand lijkt leeg of heeft geen kolomnamen in de eerste rij')
+        return
+      }
+      setHuidigBestand(file)
+      setAnalyse(resultaat)
+      setFase('mappen')
+    } catch (e) {
+      setFase('error')
+      setBericht(e instanceof Error ? e.message : 'Kon het bestand niet lezen. Controleer of het een geldig CSV-bestand is')
     }
   }
 
+  async function handleImporteer(config: KolomConfig, velden: VeldDefinitie[]) {
+    if (!huidigBestand) return
+    try {
+      const data = await parseCSV(huidigBestand, config)
+      setInstellingen({ ...instellingen, velden })
+      setApplicaties(data)
+      setFase('success')
+      setBericht(`${data.length} applicaties geladen en veldindeling bijgewerkt`)
+    } catch (e) {
+      setFase('error')
+      setBericht(e instanceof Error ? e.message : 'Fout bij verwerken van het bestand')
+    }
+  }
+
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) verwerkBestand(file)
+    e.target.value = ''
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) verwerkBestand(file)
+  }
+
+  function reset() {
+    setFase('idle')
+    setAnalyse(null)
+    setHuidigBestand(null)
+    setBericht('')
+  }
+
   function downloadTemplate() {
-    const inhoud = [
-      "cluster,naam,saas,complexiteit,afloopDatum,omgeving,status,leverancier",
-      "Klant Contact Centrum,Balie App,ja,hoog,2026-12-31,client,groen,ACME BV",
-      "Financien,Betaalsysteem,ja,laag,2027-03-01,beide,groen,FinTech NV",
-    ].join("\n")
-    const blob = new Blob([inhoud], { type: "text/csv" })
+    const velden = instellingen.velden.filter(v => v.sleutel && v.sleutel !== 'cluster')
+    const headers = ['cluster', ...velden.map(v => v.sleutel)]
+
+    function sampleWaarde(sleutel: string): string {
+      if (sleutel in BEKENDE_DEFAULTS) return BEKENDE_DEFAULTS[sleutel]
+      const veld = velden.find(v => v.sleutel === sleutel)
+      if (!veld) return ''
+      if (veld.type === 'datum') return '2026-12-31'
+      if (veld.type === 'status') return 'waarde1'
+      if (veld.type === 'icoon') return veld.icoonMappings?.[0]?.waarde ?? 'waarde1'
+      return veld.label
+    }
+
+    const rij1 = headers.map(h => sampleWaarde(h)).join(',')
+    const rij2 = ['Bedrijfsvoering', ...velden.map(v => {
+      if (v.sleutel === 'naam') return 'Tweede App'
+      if (v.sleutel === 'saas') return 'nee'
+      if (v.sleutel === 'complexiteit') return 'midden'
+      if (v.sleutel === 'afloopDatum') return '2025-06-30'
+      if (v.sleutel === 'omgeving') return 'server'
+      if (v.sleutel === 'status') return 'oranje'
+      if (v.sleutel === 'leverancier') return 'Andere BV'
+      if (v.type === 'icoon') return v.icoonMappings?.[1]?.waarde ?? v.icoonMappings?.[0]?.waarde ?? 'waarde2'
+      if (v.type === 'datum') return '2025-12-31'
+      if (v.type === 'status') return 'waarde2'
+      return v.label
+    })].join(',')
+
+    const variabeleVelden = velden.filter(v => v.type === 'icoon' || v.type === 'status')
+    const infoRegels = variabeleVelden.length > 0 ? [
+      '#',
+      '# Geldige waarden per veld:',
+      ...variabeleVelden.map(v => {
+        const waarden = v.sleutel === 'saas' ? 'ja | nee'
+          : v.sleutel === 'omgeving' ? 'client | server | beide'
+          : v.sleutel === 'complexiteit' ? 'laag | midden | hoog'
+          : v.sleutel === 'status' ? 'groen | oranje | rood'
+          : v.icoonMappings?.map(m => m.waarde).filter(Boolean).join(' | ') ?? 'zie instellingen'
+        return `# ${v.sleutel}: ${waarden}`
+      }),
+    ] : []
+
+    const inhoud = [headers.join(','), rij1, rij2, ...infoRegels].join('\n')
+    const blob = new Blob([inhoud], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
+    const a = document.createElement('a')
     a.href = url
-    a.download = "template.csv"
+    a.download = 'applicatieplaat-template.csv'
     a.click()
     URL.revokeObjectURL(url)
   }
 
+  if (fase === 'mappen' && analyse) {
+    return (
+      <div style={{ maxWidth: 700 }}>
+        <KolomMapping
+          analyse={analyse}
+          onImporteer={handleImporteer}
+          onAnnuleer={reset}
+        />
+      </div>
+    )
+  }
+
   return (
-    <div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "16px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", backgroundColor: "#eff6ff", borderRadius: "8px", border: "1px solid #bfdbfe" }}>
+    <div className="max-w-xl flex flex-col gap-4">
+
+      {/* Template downloaden */}
+      <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
         <div>
-          <p style={{ fontWeight: "500", color: "#1e40af", fontSize: "14px" }}>CSV template</p>
-          <p style={{ color: "#3b82f6", fontSize: "12px" }}>Download en vul in met jouw applicaties</p>
+          <p className="text-sm font-medium text-blue-800">CSV template</p>
+          <p className="text-xs text-blue-600 mt-0.5">Download en vul in met jouw applicaties</p>
         </div>
-        <button onClick={downloadTemplate} style={{ padding: "8px 12px", backgroundColor: "#2563eb", color: "white", borderRadius: "8px", fontSize: "14px", cursor: "pointer", border: "none" }}>
-          Download
+        <button onClick={downloadTemplate}
+          className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+          <Download size={14} /> Download
         </button>
       </div>
-      <div onClick={() => inputRef.current?.click()} style={{ border: "2px dashed #d1d5db", borderRadius: "12px", padding: "40px", textAlign: "center", cursor: "pointer", backgroundColor: "#f9fafb" }}>
-        <p style={{ fontSize: "14px", color: "#4b5563" }}>Sleep een CSV-bestand hierheen of klik om te bladeren</p>
-        <input ref={inputRef} type="file" accept=".csv" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0]; if (f) verwerkBestand(f) }} />
-      </div>
-      {status !== "idle" && (
-        <div style={{ padding: "12px", borderRadius: "8px", fontSize: "14px", backgroundColor: status === "success" ? "#f0fdf4" : "#fef2f2", color: status === "success" ? "#15803d" : "#dc2626", border: `1px solid ${status === "success" ? "#bbf7d0" : "#fecaca"}` }}>
+
+      {/* Drop zone */}
+      {fase !== 'success' && (
+        <div
+          onClick={() => inputRef.current?.click()}
+          onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={onDrop}
+          className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
+            dragging ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-gray-50'
+          }`}>
+          <Upload className="mx-auto mb-3 text-gray-400" size={32} />
+          <p className="text-sm font-medium text-gray-600">Sleep een CSV-bestand hierheen</p>
+          <p className="text-xs text-gray-400 mt-1">of klik om te bladeren</p>
+          <input ref={inputRef} type="file" accept=".csv" className="hidden" onChange={onFileChange} />
+        </div>
+      )}
+
+      {/* Status melding */}
+      {(fase === 'success' || fase === 'error') && (
+        <div className={`flex items-center gap-2 p-3 rounded-lg text-sm ${
+          fase === 'success'
+            ? 'bg-green-50 text-green-700 border border-green-200'
+            : 'bg-red-50 text-red-700 border border-red-200'
+        }`}>
+          {fase === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
           {bericht}
         </div>
+      )}
+
+      {fase === 'success' && (
+        <button onClick={reset}
+          style={{ alignSelf: 'flex-start', padding: '6px 14px', borderRadius: 8, fontSize: 13,
+            border: '1px solid #e5e7eb', backgroundColor: 'white', cursor: 'pointer', color: '#374151' }}>
+          Nieuw bestand uploaden
+        </button>
       )}
     </div>
   )

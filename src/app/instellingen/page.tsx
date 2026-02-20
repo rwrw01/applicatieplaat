@@ -45,6 +45,17 @@ export default function InstellingenPage() {
     updateLokaal({ velden: velden.filter(v => v.id !== id) })
   }
 
+  function verschuifVeld(id: string, richting: "omhoog" | "omlaag") {
+    const index = velden.findIndex(v => v.id === id)
+    if (index === -1) return
+    if (richting === "omhoog" && index === 0) return
+    if (richting === "omlaag" && index === velden.length - 1) return
+    const nieuw = [...velden]
+    const doel = richting === "omhoog" ? index - 1 : index + 1
+    ;[nieuw[index], nieuw[doel]] = [nieuw[doel], nieuw[index]]
+    updateLokaal({ velden: nieuw })
+  }
+
   function voegVeldToe() {
     if (velden.length >= MAX_VELDEN) return
     const nieuw: VeldDefinitie = {
@@ -170,7 +181,7 @@ export default function InstellingenPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {velden.map(veld => (
             <div key={veld.id} style={{ border: "1px solid #e5e7eb", borderRadius: "8px", backgroundColor: veld.zichtbaar ? "white" : "#fafafa" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "40px 1fr 1fr 120px 100px 40px", gap: "8px", padding: "10px 12px", alignItems: "center" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "40px 1fr 1fr 120px 100px 28px 40px", gap: "8px", padding: "10px 12px", alignItems: "center" }}>
                 <input type="checkbox" checked={veld.zichtbaar}
                   onChange={e => updateVeld(veld.id, { zichtbaar: e.target.checked })}
                   style={{ width: "16px", height: "16px", cursor: "pointer" }} />
@@ -193,9 +204,21 @@ export default function InstellingenPage() {
                 ) : (
                   <span style={{ fontSize: "11px", color: "#d1d5db", padding: "4px 8px" }}>n.v.t.</span>
                 )}
+                <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
+                  <button onClick={() => verschuifVeld(veld.id, "omhoog")} disabled={velden.indexOf(veld) === 0}
+                    style={{ background: "none", border: "none", cursor: velden.indexOf(veld) === 0 ? "default" : "pointer",
+                      color: velden.indexOf(veld) === 0 ? "#d1d5db" : "#6b7280", fontSize: "10px", padding: "1px", lineHeight: 1 }}>
+                    ▲
+                  </button>
+                  <button onClick={() => verschuifVeld(veld.id, "omlaag")} disabled={velden.indexOf(veld) === velden.length - 1}
+                    style={{ background: "none", border: "none", cursor: velden.indexOf(veld) === velden.length - 1 ? "default" : "pointer",
+                      color: velden.indexOf(veld) === velden.length - 1 ? "#d1d5db" : "#6b7280", fontSize: "10px", padding: "1px", lineHeight: 1 }}>
+                    ▼
+                  </button>
+                </div>
                 <button onClick={() => verwijderVeld(veld.id)}
                   style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", fontSize: "16px" }}>
-                  x
+                  ×
                 </button>
               </div>
 

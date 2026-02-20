@@ -14,7 +14,6 @@ const defaultInstellingen: Instellingen = {
     { id: "v5", label: "Afloop datum", sleutel: "afloopDatum",  type: "datum",  zichtbaar: true  },
     { id: "v6", label: "Status",       sleutel: "status",       type: "status", zichtbaar: true  },
     { id: "v7", label: "Leverancier",  sleutel: "leverancier",  type: "tekst",  zichtbaar: true,  maxLengte: 15 },
-    { id: "v8", label: "Cluster",      sleutel: "cluster",      type: "tekst",  zichtbaar: false, maxLengte: 20 },
   ]
 }
 

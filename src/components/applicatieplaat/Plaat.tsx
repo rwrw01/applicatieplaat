@@ -2,6 +2,7 @@
 import { useStore } from "@/lib/store"
 import { groupByClusters } from "@/lib/csvParser"
 import Cluster, { kleuren } from "./Cluster"
+import Legenda from "./Legenda"
 
 export default function Plaat() {
   const { applicaties, instellingen } = useStore()
@@ -18,7 +19,9 @@ export default function Plaat() {
   const clusters = groupByClusters(applicaties)
 
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-start" }}>
+    <div>
+      <Legenda velden={instellingen.velden} />
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-start" }}>
       {Object.entries(clusters).map(([naam, apps], index) => (
         <Cluster
           key={naam}
@@ -29,6 +32,7 @@ export default function Plaat() {
           velden={instellingen.velden}
         />
       ))}
+      </div>
     </div>
   )
 }
