@@ -8,7 +8,7 @@ import type { VeldDefinitie } from '@/types'
 import KolomMapping from './KolomMapping'
 
 const BEKENDE_DEFAULTS: Record<string, string> = {
-  cluster: 'Dienstverlening', naam: 'Applicatienaam', saas: 'ja',
+  organisatie: 'Organisatie A', cluster: 'Dienstverlening', naam: 'Applicatienaam', saas: 'ja',
   complexiteit: 'laag', afloopDatum: '2026-12-31', omgeving: 'client',
   status: 'groen', leverancier: 'Leverancier BV',
 }
@@ -46,11 +46,15 @@ export default function CSVUpload() {
     }
   }
 
-  async function handleImporteer(config: KolomConfig, velden: VeldDefinitie[]) {
+  async function handleImporteer(config: KolomConfig, velden: VeldDefinitie[], hoofdniveauSleutel?: string) {
     if (!huidigBestand) return
     try {
       const data = await parseCSV(huidigBestand, config)
-      setInstellingen({ ...instellingen, velden })
+      setInstellingen({
+        ...instellingen, velden,
+        subniveauSleutel: config.subniveauSleutel,
+        hoofdniveauSleutel: hoofdniveauSleutel,
+      })
       setApplicaties(data)
       setFase('success')
       setBericht(`${data.length} applicaties geladen en veldindeling bijgewerkt`)
@@ -81,8 +85,12 @@ export default function CSVUpload() {
   }
 
   function downloadTemplate() {
-    const velden = instellingen.velden.filter(v => v.sleutel && v.sleutel !== 'cluster')
-    const headers = ['cluster', ...velden.map(v => v.sleutel)]
+    const velden = instellingen.velden.filter(v => v.sleutel && v.sleutel !== instellingen.subniveauSleutel)
+    const headers = [
+      ...(instellingen.hoofdniveauSleutel ? [instellingen.hoofdniveauSleutel] : []),
+      instellingen.subniveauSleutel,
+      ...velden.map(v => v.sleutel),
+    ]
 
     function sampleWaarde(sleutel: string): string {
       if (sleutel in BEKENDE_DEFAULTS) return BEKENDE_DEFAULTS[sleutel]
@@ -95,7 +103,10 @@ export default function CSVUpload() {
     }
 
     const rij1 = headers.map(h => sampleWaarde(h)).join(',')
-    const rij2 = ['Bedrijfsvoering', ...velden.map(v => {
+    const rij2 = [
+      ...(instellingen.hoofdniveauSleutel ? ['Hoofdgroep B'] : []),
+      'Groep 2',
+      ...velden.map(v => {
       if (v.sleutel === 'naam') return 'Tweede App'
       if (v.sleutel === 'saas') return 'nee'
       if (v.sleutel === 'complexiteit') return 'midden'

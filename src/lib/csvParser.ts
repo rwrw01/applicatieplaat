@@ -39,13 +39,14 @@ export function detecteerType(waarden: string[]): VeldType {
 }
 
 export interface KolomConfig {
-  clusterSleutel: string
+  subniveauSleutel: string
   naamSleutel: string
   kolomTypes: Record<string, VeldType>
+  hoofdniveauSleutel?: string
 }
 
 const STANDAARD_CONFIG: KolomConfig = {
-  clusterSleutel: 'cluster',
+  subniveauSleutel: 'cluster',
   naamSleutel: 'naam',
   kolomTypes: {
     saas: 'icoon', complexiteit: 'status', afloopDatum: 'datum',
@@ -66,14 +67,14 @@ export function parseCSV(file: File, config: KolomConfig = STANDAARD_CONFIG): Pr
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const { clusterSleutel, naamSleutel, kolomTypes } = config
+        const { subniveauSleutel, naamSleutel, kolomTypes, hoofdniveauSleutel } = config
         const applicaties: Applicatie[] = results.data
-          .filter(row => !String(row[clusterSleutel] ?? '').startsWith('#'))
+          .filter(row => !String(row[subniveauSleutel] ?? '').startsWith('#'))
           .map((row, index) => {
             const app: Applicatie = {
               id: `app-${index}`,
-              cluster:      row[clusterSleutel] ?? '',
-              naam:         row[naamSleutel]    ?? '',
+              cluster:      row[subniveauSleutel] ?? '',
+              naam:         row[naamSleutel]      ?? '',
               saas:         BOOL_WAAR.has(row['saas']?.toLowerCase() ?? ''),
               complexiteit: (row['complexiteit'] ?? 'laag') as Applicatie['complexiteit'],
               afloopDatum:  row['afloopDatum']  ?? '',
@@ -81,10 +82,12 @@ export function parseCSV(file: File, config: KolomConfig = STANDAARD_CONFIG): Pr
               status:       (row['status']      ?? 'groen') as Applicatie['status'],
               leverancier:  row['leverancier']  ?? '',
             }
+            if (hoofdniveauSleutel) app[hoofdniveauSleutel] = row[hoofdniveauSleutel] ?? ''
             const VERBODEN_SLEUTELS = new Set(['__proto__', 'constructor', 'prototype'])
             for (const key of Object.keys(row)) {
               if (VERBODEN_SLEUTELS.has(key)) continue
-              if (key === clusterSleutel || key === naamSleutel) continue
+              if (key === subniveauSleutel || key === naamSleutel) continue
+              if (hoofdniveauSleutel && key === hoofdniveauSleutel) continue
               if (key in app && !kolomTypes[key]) continue
               app[key] = parseWaarde(row[key] ?? '', key)
             }
@@ -97,10 +100,22 @@ export function parseCSV(file: File, config: KolomConfig = STANDAARD_CONFIG): Pr
   })
 }
 
-export function groupByClusters(applicaties: Applicatie[]) {
+export function groupBySubniveau(applicaties: Applicatie[], sleutel: string) {
   return applicaties.reduce((acc, app) => {
-    if (!acc[app.cluster]) acc[app.cluster] = []
-    acc[app.cluster].push(app)
+    const val = String((app as Record<string, unknown>)[sleutel] ?? '')
+    if (!acc[val]) acc[val] = []
+    acc[val].push(app)
     return acc
   }, {} as Record<string, Applicatie[]>)
+}
+
+export function groupByHoofdniveau(applicaties: Applicatie[], subniveauSleutel: string, hoofdniveauSleutel: string) {
+  return applicaties.reduce((acc, app) => {
+    const hoofd = String((app as Record<string, unknown>)[hoofdniveauSleutel] ?? '')
+    const sub   = String((app as Record<string, unknown>)[subniveauSleutel]   ?? '')
+    if (!acc[hoofd]) acc[hoofd] = {}
+    if (!acc[hoofd][sub]) acc[hoofd][sub] = []
+    acc[hoofd][sub].push(app)
+    return acc
+  }, {} as Record<string, Record<string, Applicatie[]>>)
 }

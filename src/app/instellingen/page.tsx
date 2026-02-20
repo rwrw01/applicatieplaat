@@ -87,7 +87,7 @@ export default function InstellingenPage() {
     <div style={{ maxWidth: "960px", paddingBottom: "80px" }}>
       <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#1f2937", marginBottom: "24px" }}>Instellingen</h1>
 
-      <WeergaveSection maxAppsPerRij={maxAppsPerRij} onChange={updateLokaal} />
+      <WeergaveSection maxAppsPerRij={maxAppsPerRij} subniveauSleutel={lokaal.subniveauSleutel} hoofdniveauSleutel={lokaal.hoofdniveauSleutel} velden={velden} onChange={updateLokaal} />
       <DataBeheerSection onReset={handleReset} />
 
       <div style={{ backgroundColor: "white", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "24px" }}>

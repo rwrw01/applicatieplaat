@@ -21,6 +21,7 @@ export interface VeldDefinitie {
 
 export interface Applicatie {
   id: string
+  organisatie?: string
   cluster: string
   naam: string
   saas: boolean
@@ -34,5 +35,7 @@ export interface Applicatie {
 
 export interface Instellingen {
   maxAppsPerRij: number
+  subniveauSleutel: string
+  hoofdniveauSleutel?: string
   velden: VeldDefinitie[]
 }

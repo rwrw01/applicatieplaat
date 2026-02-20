@@ -3,13 +3,15 @@ import { useState, useEffect } from "react"
 import { useStore } from "@/lib/store"
 import type { Applicatie, VeldDefinitie } from "@/types"
 
-function legeRij(velden: VeldDefinitie[]): Applicatie {
+function legeRij(velden: VeldDefinitie[], subniveauSleutel: string, hoofdniveauSleutel?: string): Applicatie {
   const rij: Applicatie = {
     id: crypto.randomUUID(),
     cluster: "", naam: "", saas: false,
     complexiteit: "laag", afloopDatum: "",
     omgeving: "client", status: "groen", leverancier: "",
   }
+  ;(rij as Record<string, unknown>)[subniveauSleutel] = ""
+  if (hoofdniveauSleutel) (rij as Record<string, unknown>)[hoofdniveauSleutel] = ""
   velden.forEach(v => {
     if (!(v.sleutel in rij)) {
       (rij as Record<string, unknown>)[v.sleutel] = ""
@@ -18,8 +20,10 @@ function legeRij(velden: VeldDefinitie[]): Applicatie {
   return rij
 }
 
-function vulRijAan(rij: Applicatie, velden: VeldDefinitie[]): Applicatie {
+function vulRijAan(rij: Applicatie, velden: VeldDefinitie[], subniveauSleutel: string, hoofdniveauSleutel?: string): Applicatie {
   const bijgewerkt = { ...rij }
+  if (!(subniveauSleutel in bijgewerkt)) (bijgewerkt as Record<string, unknown>)[subniveauSleutel] = ""
+  if (hoofdniveauSleutel && !(hoofdniveauSleutel in bijgewerkt)) (bijgewerkt as Record<string, unknown>)[hoofdniveauSleutel] = ""
   velden.forEach(v => {
     if (!(v.sleutel in bijgewerkt)) {
       (bijgewerkt as Record<string, unknown>)[v.sleutel] = ""
@@ -99,25 +103,24 @@ function renderInvoercel(
 
 export default function HandmatigInvoer() {
   const { applicaties, setApplicaties, instellingen } = useStore()
-  const zichtbareVelden = instellingen.velden.filter(v => v.zichtbaar)
+  const { velden, subniveauSleutel, hoofdniveauSleutel } = instellingen
+  const zichtbareVelden = velden.filter(v => v.zichtbaar)
 
   const [rijen, setRijen] = useState<Applicatie[]>(() =>
     applicaties.length > 0
-      ? applicaties.map(r => vulRijAan(r, instellingen.velden))
-      : [legeRij(instellingen.velden)]
+      ? applicaties.map(r => vulRijAan(r, velden, subniveauSleutel, hoofdniveauSleutel))
+      : [legeRij(velden, subniveauSleutel, hoofdniveauSleutel)]
   )
   const [gewijzigd, setGewijzigd] = useState(false)
   const [opgeslagen, setOpgeslagen] = useState(false)
 
-  // Nieuwe velden uit instellingen toevoegen aan bestaande rijen
   useEffect(() => {
-    setRijen(prev => prev.map(r => vulRijAan(r, instellingen.velden)))
-  }, [instellingen.velden])
+    setRijen(prev => prev.map(r => vulRijAan(r, velden, subniveauSleutel, hoofdniveauSleutel)))
+  }, [velden, subniveauSleutel, hoofdniveauSleutel])
 
-  // Sync als store van buitenaf wijzigt
   useEffect(() => {
     if (applicaties.length > 0) {
-      setRijen(applicaties.map(r => vulRijAan(r, instellingen.velden)))
+      setRijen(applicaties.map(r => vulRijAan(r, velden, subniveauSleutel, hoofdniveauSleutel)))
       setGewijzigd(false)
     }
   }, [applicaties])
@@ -135,13 +138,13 @@ export default function HandmatigInvoer() {
   }
 
   function voegRijToe() {
-    setRijen(prev => [...prev, legeRij(instellingen.velden)])
+    setRijen(prev => [...prev, legeRij(velden, subniveauSleutel, hoofdniveauSleutel)])
     setGewijzigd(true)
     setOpgeslagen(false)
   }
 
   function annuleren() {
-    setRijen(applicaties.map(r => vulRijAan(r, instellingen.velden)))
+    setRijen(applicaties.map(r => vulRijAan(r, velden, subniveauSleutel, hoofdniveauSleutel)))
     setGewijzigd(false)
   }
 
@@ -167,7 +170,10 @@ export default function HandmatigInvoer() {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
           <thead>
             <tr style={{ backgroundColor: "#1f2937", color: "white" }}>
-              <th style={{ padding: "8px 12px", textAlign: "left", whiteSpace: "nowrap" }}>Cluster</th>
+              {hoofdniveauSleutel && (
+                <th style={{ padding: "8px 12px", textAlign: "left", whiteSpace: "nowrap" }}>{hoofdniveauSleutel}</th>
+              )}
+              <th style={{ padding: "8px 12px", textAlign: "left", whiteSpace: "nowrap" }}>{subniveauSleutel}</th>
               {zichtbareVelden.map(v => (
                 <th key={v.id} style={{ padding: "8px 12px", textAlign: "left", whiteSpace: "nowrap" }}>
                   {v.label}
@@ -179,10 +185,19 @@ export default function HandmatigInvoer() {
           <tbody>
             {rijen.map(rij => (
               <tr key={rij.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                {hoofdniveauSleutel && (
+                  <td style={tdStyle}>
+                    <input style={inputStyle} type="text"
+                      value={String((rij as Record<string, unknown>)[hoofdniveauSleutel] ?? "")}
+                      placeholder={hoofdniveauSleutel}
+                      onChange={e => updateRij(rij.id, hoofdniveauSleutel, e.target.value)} />
+                  </td>
+                )}
                 <td style={tdStyle}>
-                  <input style={inputStyle} type="text" value={rij.cluster}
-                    placeholder="Cluster"
-                    onChange={e => updateRij(rij.id, "cluster", e.target.value)} />
+                  <input style={inputStyle} type="text"
+                    value={String((rij as Record<string, unknown>)[subniveauSleutel] ?? "")}
+                    placeholder={subniveauSleutel}
+                    onChange={e => updateRij(rij.id, subniveauSleutel, e.target.value)} />
                 </td>
                 {zichtbareVelden.map(veld => (
                   <td key={veld.id} style={tdStyle}>
@@ -211,7 +226,6 @@ export default function HandmatigInvoer() {
         + Rij toevoegen
       </button>
 
-      {/* Zwevende opslaan balk */}
       {gewijzigd && (
         <div style={{
           position: "fixed", bottom: "24px", right: "24px",
@@ -234,7 +248,6 @@ export default function HandmatigInvoer() {
         </div>
       )}
 
-      {/* Bevestiging */}
       {opgeslagen && (
         <div style={{
           position: "fixed", bottom: "24px", right: "24px",

@@ -7,6 +7,7 @@ import { STORAGE_KEYS } from "./constants"
 
 const defaultInstellingen: Instellingen = {
   maxAppsPerRij: 6,
+  subniveauSleutel: "cluster",
   velden: [
     { id: "v1", label: "Naam",         sleutel: "naam",         type: "tekst",  zichtbaar: true,  maxLengte: 20 },
     { id: "v2", label: "SaaS",         sleutel: "saas",         type: "icoon",  zichtbaar: true  },
@@ -58,7 +59,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setApplicatiesState(laadUitStorage(STORAGE_KEYS.applicaties, standaardApplicaties))
-    setInstellingenState(laadUitStorage(STORAGE_KEYS.instellingen, defaultInstellingen))
+    const opgeslagenInst = laadUitStorage(STORAGE_KEYS.instellingen, defaultInstellingen)
+    const inst: Instellingen & Record<string, unknown> = { ...defaultInstellingen, ...opgeslagenInst }
+    // Migreer oud formaat: organisatieEnabled → hoofdniveauSleutel
+    if ("organisatieEnabled" in inst) {
+      if (inst.organisatieEnabled) inst.hoofdniveauSleutel = "organisatie"
+      delete inst.organisatieEnabled
+    }
+    setInstellingenState(inst as Instellingen)
   }, [])
 
   function setApplicaties(apps: Applicatie[]) {

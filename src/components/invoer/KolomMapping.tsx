@@ -9,7 +9,7 @@ const VELD_TYPES: VeldType[] = ['tekst', 'datum', 'icoon', 'status']
 interface KolomState {
   header: string
   type: VeldType
-  rol: 'cluster' | 'naam' | 'veld'
+  rol: 'hoofdniveau' | 'subniveau' | 'naam' | 'veld'
 }
 
 function initKolomStates(analyse: CSVAnalyse): KolomState[] {
@@ -18,7 +18,8 @@ function initKolomStates(analyse: CSVAnalyse): KolomState[] {
     const type = detecteerType(waarden)
     const lc = header.toLowerCase()
     const rol: KolomState['rol'] =
-      lc === 'cluster' ? 'cluster' :
+      lc === 'organisatie' || lc === 'organization' || lc === 'organisation' || lc === 'hoofdniveau' ? 'hoofdniveau' :
+      lc === 'cluster' || lc === 'subniveau' ? 'subniveau' :
       lc === 'naam' || lc === 'name' ? 'naam' : 'veld'
     return { header, type, rol }
   })
@@ -26,7 +27,7 @@ function initKolomStates(analyse: CSVAnalyse): KolomState[] {
 
 interface Props {
   analyse: CSVAnalyse
-  onImporteer: (config: KolomConfig, velden: VeldDefinitie[]) => void
+  onImporteer: (config: KolomConfig, velden: VeldDefinitie[], hoofdniveauSleutel?: string) => void
   onAnnuleer: () => void
 }
 
@@ -37,7 +38,6 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
   function updateKolom(index: number, wijziging: Partial<KolomState>) {
     setKolommen(prev => {
       const nieuw = [...prev]
-      // Als rol cluster/naam wordt → reset andere kolom met zelfde rol
       if (wijziging.rol && wijziging.rol !== 'veld') {
         nieuw.forEach((k, i) => {
           if (i !== index && k.rol === wijziging.rol) nieuw[i] = { ...k, rol: 'veld' }
@@ -50,11 +50,12 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
   }
 
   function handleImporteer() {
-    const clusterKolom = kolommen.find(k => k.rol === 'cluster')
-    const naamKolom    = kolommen.find(k => k.rol === 'naam')
+    const hoofdniveauKolom = kolommen.find(k => k.rol === 'hoofdniveau')
+    const subniveauKolom   = kolommen.find(k => k.rol === 'subniveau')
+    const naamKolom        = kolommen.find(k => k.rol === 'naam')
 
-    if (!clusterKolom) {
-      setFout('Wijs één kolom aan als Cluster (voor de groepering op de plaat)')
+    if (!subniveauKolom) {
+      setFout('Wijs één kolom aan als Subniveau (voor de groepering op de plaat)')
       return
     }
     if (!naamKolom) {
@@ -66,9 +67,10 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
     kolommen.forEach(k => { kolomTypes[k.header] = k.type })
 
     const config: KolomConfig = {
-      clusterSleutel: clusterKolom.header,
-      naamSleutel:    naamKolom.header,
+      subniveauSleutel: subniveauKolom.header,
+      naamSleutel:      naamKolom.header,
       kolomTypes,
+      ...(hoofdniveauKolom ? { hoofdniveauSleutel: hoofdniveauKolom.header } : {}),
     }
 
     const velden: VeldDefinitie[] = [
@@ -85,7 +87,7 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
         } as VeldDefinitie)),
     ]
 
-    onImporteer(config, velden)
+    onImporteer(config, velden, hoofdniveauKolom?.header)
   }
 
   const selectStyle: React.CSSProperties = {
@@ -100,13 +102,12 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
           Kolommen koppelen
         </h3>
         <p style={{ fontSize: 12, color: '#6b7280', margin: 0 }}>
-          De typen zijn automatisch herkend. Controleer en wijs de Cluster- en Naam-kolom aan.
+          De typen zijn automatisch herkend. Controleer en wijs het Subniveau- en Naam-veld aan.
         </p>
       </div>
 
       <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-        {/* Header */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 110px 200px', gap: 8,
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 110px 230px', gap: 8,
           padding: '8px 12px', backgroundColor: '#f9fafb',
           borderBottom: '1px solid #e5e7eb', fontSize: 11, fontWeight: 600, color: '#6b7280',
           textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -125,7 +126,7 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
 
           return (
             <div key={kolom.header}
-              style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 110px 200px', gap: 8,
+              style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 110px 230px', gap: 8,
                 padding: '8px 12px', alignItems: 'center',
                 borderBottom: i < kolommen.length - 1 ? '1px solid #f3f4f6' : 'none',
                 backgroundColor: kolom.rol !== 'veld' ? '#eff6ff' : 'white' }}>
@@ -138,20 +139,20 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
               </span>
 
               <select style={selectStyle} value={kolom.type}
-                disabled={kolom.rol !== 'veld'}
+                disabled={kolom.rol !== 'veld' && kolom.rol !== 'naam'}
                 onChange={e => updateKolom(i, { type: e.target.value as VeldType })}>
                 {VELD_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
 
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                {(['cluster', 'naam', 'veld'] as const).map(rol => (
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                {(['hoofdniveau', 'subniveau', 'naam', 'veld'] as const).map(rol => (
                   <label key={rol} style={{ display: 'flex', alignItems: 'center', gap: 4,
                     fontSize: 12, color: '#374151', cursor: 'pointer' }}>
                     <input type="radio" name={`rol-${kolom.header}`}
                       checked={kolom.rol === rol}
                       onChange={() => updateKolom(i, { rol })}
                       style={{ cursor: 'pointer' }} />
-                    {rol === 'cluster' ? 'Cluster' : rol === 'naam' ? 'Naam' : 'Veld'}
+                    {rol === 'hoofdniveau' ? 'Hoofdniveau' : rol === 'subniveau' ? 'Subniveau' : rol === 'naam' ? 'Naam' : 'Veld'}
                   </label>
                 ))}
               </div>
