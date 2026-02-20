@@ -21,16 +21,16 @@ export default function Cluster({ naam, applicaties, kleur, maxPerRij = 6, velde
   return (
     <div style={{
       border: `2px solid ${borderColor}`, borderRadius: "12px", padding: "16px",
-      backgroundColor: "#f9fafb", display: "inline-block", verticalAlign: "top",
+      backgroundColor: "#f9fafb", display: "inline-block", width: "100%",
+      breakInside: "avoid", marginBottom: "16px",
     }}>
       <h2 style={{ fontWeight: "700", fontSize: "12px", color: "#374151", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>
         {naam}
       </h2>
       <div style={{
         display: "grid",
-        gridTemplateColumns: `repeat(${maxPerRij}, 1fr)`,
+        gridTemplateColumns: `repeat(${maxPerRij}, 160px)`,
         gap: "8px",
-        alignItems: "stretch",
       }}>
         {applicaties.map(app => <AppKaart key={app.id} app={app} velden={velden} />)}
       </div>

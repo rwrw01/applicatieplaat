@@ -146,6 +146,7 @@ export default function InstellingenPage() {
             ))}
           </div>
         </div>
+
       </div>
 
       {/* Data beheer */}

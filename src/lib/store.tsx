@@ -47,12 +47,13 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [applicaties, setApplicatiesState] = useState<Applicatie[]>(() =>
-    laadUitStorage("applicaties", standaardApplicaties)
-  )
-  const [instellingen, setInstellingenState] = useState<Instellingen>(() =>
-    laadUitStorage("instellingen", defaultInstellingen)
-  )
+  const [applicaties, setApplicatiesState] = useState<Applicatie[]>(standaardApplicaties)
+  const [instellingen, setInstellingenState] = useState<Instellingen>(defaultInstellingen)
+
+  useEffect(() => {
+    setApplicatiesState(laadUitStorage("applicaties", standaardApplicaties))
+    setInstellingenState(laadUitStorage("instellingen", defaultInstellingen))
+  }, [])
 
   function setApplicaties(apps: Applicatie[]) {
     setApplicatiesState(apps)

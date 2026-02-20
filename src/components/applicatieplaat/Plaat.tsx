@@ -21,7 +21,7 @@ export default function Plaat() {
   return (
     <div>
       <Legenda velden={instellingen.velden} />
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-start" }}>
+      <div style={{ columnWidth: `${instellingen.maxAppsPerRij * 160 + (instellingen.maxAppsPerRij - 1) * 8 + 32}px`, columnGap: "16px" }}>
       {Object.entries(clusters).map(([naam, apps], index) => (
         <Cluster
           key={naam}
