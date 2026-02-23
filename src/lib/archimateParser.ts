@@ -35,6 +35,8 @@ export interface ArchiMateImportConfig {
   organisatieEigenschapSleutel?: string
 }
 
+/* ── Constanten ── */
+
 const LAAG_MAP: Record<string, string> = {
   strategy: 'strategy',
   business: 'business',
@@ -45,17 +47,94 @@ const LAAG_MAP: Record<string, string> = {
   other: 'other',
 }
 
+const TYPE_LAAG_MAP: Record<string, string> = {
+  // Application
+  ApplicationComponent: 'application', ApplicationCollaboration: 'application',
+  ApplicationFunction: 'application', ApplicationInteraction: 'application',
+  ApplicationInterface: 'application', ApplicationProcess: 'application',
+  ApplicationService: 'application', ApplicationEvent: 'application',
+  DataObject: 'application',
+  // Business
+  BusinessActor: 'business', BusinessCollaboration: 'business',
+  BusinessEvent: 'business', BusinessFunction: 'business',
+  BusinessInteraction: 'business', BusinessInterface: 'business',
+  BusinessObject: 'business', BusinessProcess: 'business',
+  BusinessRole: 'business', BusinessService: 'business',
+  Contract: 'business', Product: 'business', Representation: 'business',
+  // Technology
+  Artifact: 'technology', CommunicationNetwork: 'technology',
+  Device: 'technology', Node: 'technology',
+  Path: 'technology', SystemSoftware: 'technology',
+  TechnologyCollaboration: 'technology', TechnologyEvent: 'technology',
+  TechnologyFunction: 'technology', TechnologyInteraction: 'technology',
+  TechnologyInterface: 'technology', TechnologyProcess: 'technology',
+  TechnologyService: 'technology',
+  // Physical
+  DistributionNetwork: 'technology', Equipment: 'technology',
+  Facility: 'technology', Material: 'technology',
+  // Strategy
+  Capability: 'strategy', CourseOfAction: 'strategy',
+  Resource: 'strategy', ValueStream: 'strategy',
+  // Motivation
+  Assessment: 'motivation', Constraint: 'motivation',
+  Driver: 'motivation', Goal: 'motivation',
+  Meaning: 'motivation', Outcome: 'motivation',
+  Principle: 'motivation', Requirement: 'motivation',
+  Stakeholder: 'motivation', Value: 'motivation',
+  // Implementation & Migration
+  Deliverable: 'implementation_migration', Gap: 'implementation_migration',
+  ImplementationEvent: 'implementation_migration', Plateau: 'implementation_migration',
+  WorkPackage: 'implementation_migration',
+  // Composite
+  Grouping: 'other', Location: 'other',
+}
+
 const VERBODEN_SLEUTELS = new Set(['__proto__', 'constructor', 'prototype'])
 
-export function parseArchiMateXML(xmlTekst: string): ArchiMateModel {
-  const parser = new DOMParser()
-  const doc = parser.parseFromString(xmlTekst, 'application/xml')
+/* ── Helpers ── */
 
-  const parseError = doc.querySelector('parsererror')
-  if (parseError) {
-    throw new Error('Ongeldig XML-bestand: kon het ArchiMate-model niet lezen')
+function normaliseerRelatieType(type: string): string {
+  if (!type.endsWith('Relationship')) return type + 'Relationship'
+  return type
+}
+
+function bepaalLaag(type: string): string {
+  return TYPE_LAAG_MAP[type] ?? 'other'
+}
+
+function eersteChildTekst(parent: Element, tagNaam: string, ns?: string): string {
+  const child = ns
+    ? parent.getElementsByTagNameNS(ns, tagNaam)[0]
+    : parent.getElementsByTagName(tagNaam)[0]
+  return child?.textContent?.trim() ?? ''
+}
+
+function bouwModel(
+  naam: string,
+  versie: string,
+  elementen: ArchiMateElement[],
+  relaties: ArchiMateRelatie[],
+  eigenschapSleutelsSet: Set<string>,
+): ArchiMateModel {
+  const elementenPerType: Record<string, ArchiMateElement[]> = {}
+  for (const el of elementen) {
+    if (!elementenPerType[el.type]) elementenPerType[el.type] = []
+    elementenPerType[el.type].push(el)
   }
+  return {
+    naam,
+    versie,
+    elementen,
+    relaties,
+    elementenPerType,
+    beschikbareTypen: Object.keys(elementenPerType).sort(),
+    eigenschapSleutels: [...eigenschapSleutelsSet].sort(),
+  }
+}
 
+/* ── Archi Native Format Parser (.archimate bestanden) ── */
+
+function parseNativeFormat(doc: Document): ArchiMateModel {
   const root = doc.documentElement
   const naam = root.getAttribute('name') ?? 'Onbekend model'
   const versie = root.getAttribute('version') ?? ''
@@ -78,7 +157,7 @@ export function parseArchiMateXML(xmlTekst: string): ArchiMateModel {
         if (laag === 'relations' || type.endsWith('Relationship')) {
           relaties.push({
             id,
-            type,
+            type: normaliseerRelatieType(type),
             bronId: child.getAttribute('source') ?? '',
             doelId: child.getAttribute('target') ?? '',
           })
@@ -106,21 +185,109 @@ export function parseArchiMateXML(xmlTekst: string): ArchiMateModel {
     }
   }
 
-  const elementenPerType: Record<string, ArchiMateElement[]> = {}
-  for (const el of elementen) {
-    if (!elementenPerType[el.type]) elementenPerType[el.type] = []
-    elementenPerType[el.type].push(el)
+  return bouwModel(naam, versie, elementen, relaties, eigenschapSleutelsSet)
+}
+
+/* ── Open Group Exchange Format Parser ── */
+
+function parseExchangeFormat(doc: Document): ArchiMateModel {
+  const root = doc.documentElement
+  const ns = root.namespaceURI ?? ''
+
+  // Model-naam uit <name> child-element
+  const naam = eersteChildTekst(root, 'name', ns) || 'Onbekend model'
+  // Exchange format heeft geen version attribuut op root
+  const versie = ''
+
+  // Property definitions resolven: identifier → naam
+  const propDefMap = new Map<string, string>()
+  const propDefsContainer = root.getElementsByTagNameNS(ns, 'propertyDefinitions')[0]
+  if (propDefsContainer) {
+    for (const propDef of Array.from(propDefsContainer.getElementsByTagNameNS(ns, 'propertyDefinition'))) {
+      const id = propDef.getAttribute('identifier') ?? ''
+      const defNaam = eersteChildTekst(propDef, 'name', ns)
+      if (id && defNaam) propDefMap.set(id, defNaam)
+    }
   }
 
-  return {
-    naam,
-    versie,
-    elementen,
-    relaties,
-    elementenPerType,
-    beschikbareTypen: Object.keys(elementenPerType).sort(),
-    eigenschapSleutels: [...eigenschapSleutelsSet].sort(),
+  const elementen: ArchiMateElement[] = []
+  const relaties: ArchiMateRelatie[] = []
+  const eigenschapSleutelsSet = new Set<string>()
+
+  // Elementen uitlezen
+  const elemContainer = root.getElementsByTagNameNS(ns, 'elements')[0]
+  if (elemContainer) {
+    for (const el of Array.from(elemContainer.getElementsByTagNameNS(ns, 'element'))) {
+      const id = el.getAttribute('identifier') ?? ''
+      const elementNaam = eersteChildTekst(el, 'name', ns)
+      const xsiType = el.getAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'type') ?? ''
+      // Type kan prefix bevatten (bijv. "archimate:ApplicationComponent" of gewoon "ApplicationComponent")
+      const type = xsiType.includes(':') ? xsiType.split(':').pop()! : xsiType
+
+      const eigenschappen: Record<string, string> = {}
+      // Properties via propertyDefinitionRef
+      const propElements = el.getElementsByTagNameNS(ns, 'property')
+      for (const prop of Array.from(propElements)) {
+        const defRef = prop.getAttribute('propertyDefinitionRef') ?? ''
+        const key = propDefMap.get(defRef) ?? defRef
+        const value = eersteChildTekst(prop, 'value', ns)
+        if (key && !VERBODEN_SLEUTELS.has(key)) {
+          eigenschappen[key] = value
+          eigenschapSleutelsSet.add(key)
+        }
+      }
+
+      elementen.push({
+        id,
+        naam: elementNaam,
+        type,
+        laag: bepaalLaag(type),
+        eigenschappen,
+      })
+    }
   }
+
+  // Relaties uitlezen
+  const relContainer = root.getElementsByTagNameNS(ns, 'relationships')[0]
+  if (relContainer) {
+    for (const rel of Array.from(relContainer.getElementsByTagNameNS(ns, 'relationship'))) {
+      const id = rel.getAttribute('identifier') ?? ''
+      const xsiType = rel.getAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'type') ?? ''
+      const type = xsiType.includes(':') ? xsiType.split(':').pop()! : xsiType
+
+      relaties.push({
+        id,
+        type: normaliseerRelatieType(type),
+        bronId: rel.getAttribute('source') ?? '',
+        doelId: rel.getAttribute('target') ?? '',
+      })
+    }
+  }
+
+  return bouwModel(naam, versie, elementen, relaties, eigenschapSleutelsSet)
+}
+
+/* ── Publieke API ── */
+
+export function parseArchiMateXML(xmlTekst: string): ArchiMateModel {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(xmlTekst, 'application/xml')
+
+  const parseError = doc.querySelector('parsererror')
+  if (parseError) {
+    throw new Error('Ongeldig XML-bestand: kon het ArchiMate-model niet lezen')
+  }
+
+  const root = doc.documentElement
+
+  // Formaat detectie: Open Group Exchange Format vs. Archi Native
+  const isExchangeFormat =
+    root.namespaceURI?.includes('opengroup.org/xsd/archimate') === true ||
+    (root.localName === 'model' && !root.getAttribute('name'))
+
+  return isExchangeFormat
+    ? parseExchangeFormat(doc)
+    : parseNativeFormat(doc)
 }
 
 export async function analyseArchiMate(file: File): Promise<ArchiMateModel> {
