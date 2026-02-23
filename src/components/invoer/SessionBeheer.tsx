@@ -1,8 +1,9 @@
 'use client'
 import { useRef, useState } from 'react'
-import { Download, Upload, CheckCircle, AlertCircle } from 'lucide-react'
+import { Download, Upload, CheckCircle, AlertCircle, FileText } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import { normaliseerApp } from '@/lib/appUtils'
+import { exporteerMermaid } from '@/lib/exportUtils'
 import type { Applicatie, Instellingen } from '@/types'
 
 interface SessionBestand {
@@ -108,17 +109,27 @@ export default function SessionBeheer() {
         <p style={{ fontSize: 12, color: '#6b7280', margin: '0 0 16px' }}>
           Slaat alle applicaties én instellingen op als JSON-bestand. Gebruik dit om later verder te gaan.
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '12px 16px', backgroundColor: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
-          <span style={{ fontSize: 12, color: '#374151' }}>
-            {applicaties.length} applicaties · {instellingen.velden.length} velden
-          </span>
-          <button onClick={exporteer}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px',
-              backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: 7,
-              fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>
-            <Download size={14} /> Downloaden
-          </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '12px 16px', backgroundColor: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
+            <span style={{ fontSize: 12, color: '#374151' }}>
+              {applicaties.length} applicaties · {instellingen.velden.length} velden
+            </span>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => exporteerMermaid(instellingen, applicaties)}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px',
+                  backgroundColor: 'white', color: '#374151', border: '1px solid #e5e7eb', borderRadius: 7,
+                  fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>
+                <FileText size={14} /> Mermaid (.md)
+              </button>
+              <button onClick={exporteer}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px',
+                  backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: 7,
+                  fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>
+                <Download size={14} /> Sessie (.json)
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
