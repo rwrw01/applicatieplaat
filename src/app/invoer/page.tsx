@@ -1,12 +1,13 @@
 'use client'
 import { useState } from 'react'
-import { Upload, Table, Save } from 'lucide-react'
+import { Upload, Table, Save, FileCode } from 'lucide-react'
 import clsx from 'clsx'
 import CSVUpload from '@/components/invoer/CSVUpload'
+import ArchiMateUpload from '@/components/invoer/ArchiMateUpload'
 import HandmatigInvoer from '@/components/invoer/HandmatigInvoer'
 import SessionBeheer from '@/components/invoer/SessionBeheer'
 
-type Tab = 'csv' | 'handmatig' | 'sessie'
+type Tab = 'csv' | 'archimate' | 'handmatig' | 'sessie'
 
 export default function InvoerPage() {
   const [actieveTab, setActieveTab] = useState<Tab>('csv')
@@ -25,6 +26,17 @@ export default function InvoerPage() {
           )}
         >
           <Upload size={16} /> CSV uploaden
+        </button>
+        <button
+          onClick={() => setActieveTab('archimate')}
+          className={clsx(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors',
+            actieveTab === 'archimate'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          )}
+        >
+          <FileCode size={16} /> ArchiMate
         </button>
         <button
           onClick={() => setActieveTab('handmatig')}
@@ -50,6 +62,7 @@ export default function InvoerPage() {
         </button>
       </div>
       {actieveTab === 'csv' && <CSVUpload />}
+      {actieveTab === 'archimate' && <ArchiMateUpload />}
       {actieveTab === 'handmatig' && <HandmatigInvoer />}
       {actieveTab === 'sessie' && <SessionBeheer />}
     </div>
