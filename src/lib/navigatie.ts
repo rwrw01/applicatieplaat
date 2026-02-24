@@ -1,4 +1,4 @@
-import { LayoutDashboard, PlusCircle, Settings, HelpCircle } from "lucide-react"
+import { LayoutDashboard, PlusCircle, Settings, HelpCircle, FileCode } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 export interface NavItem {
@@ -9,7 +9,8 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   { href: "/",             label: "Applicatieplaat", icon: LayoutDashboard },
-  { href: "/invoer",       label: "Data invoeren",   icon: PlusCircle },
+  { href: "/invoer",       label: "Data in/uitvoeren",   icon: PlusCircle },
   { href: "/instellingen", label: "Instellingen",    icon: Settings },
+  { href: "/mermaid",      label: "Mermaid",         icon: FileCode },
   { href: "/help",         label: "Help",            icon: HelpCircle },
 ]

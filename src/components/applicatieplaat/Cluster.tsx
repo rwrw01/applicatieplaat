@@ -22,7 +22,7 @@ export default function Cluster({ naam, applicaties, kleur, maxPerRij, velden, k
   const kolommen = Math.min(applicaties.length, maxPerRij ?? 3)
 
   return (
-    <div style={{
+    <div data-pdf-blok="cluster" style={{
       border: `2px solid ${borderColor}`, borderRadius: "12px", padding: "16px",
       backgroundColor: "#f9fafb", breakInside: "avoid",
       width: "100%", boxSizing: "border-box",

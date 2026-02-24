@@ -21,7 +21,7 @@ export default function InvoerPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1f2937", marginBottom: 24 }}>Data invoeren</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1f2937", marginBottom: 24 }}>Data in/uitvoeren</h1>
       <TabBalk tabs={tabs} actief={actieveTab} onChange={setActieveTab} />
       {actieveTab === 'csv' && <CSVUpload />}
       {actieveTab === 'archimate' && <ArchiMateUpload />}

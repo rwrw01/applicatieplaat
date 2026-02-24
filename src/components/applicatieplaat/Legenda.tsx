@@ -94,7 +94,7 @@ export default function Legenda({ velden }: { velden: VeldDefinitie[] }) {
   ]
 
   return (
-    <div style={{ backgroundColor: "white", border: "1px solid #e5e7eb", borderRadius: 10,
+    <div data-pdf-blok="legenda" style={{ backgroundColor: "white", border: "1px solid #e5e7eb", borderRadius: 10,
       marginBottom: 20, overflow: "hidden" }}>
 
       {/* Header / toggle */}

@@ -28,7 +28,7 @@ const secties: Sectie[] = [
           <li><strong>Laden vanuit JSON</strong> — herstel een eerder opgeslagen sessie door een JSON-bestand te slepen of te selecteren</li>
         </ul>
         <img src="/help/welkom.png" alt="Welkomscherm" style={imgStijl} />
-        <p style={{ marginTop: 12 }}>Wil je daarna je eigen data laden? Ga dan naar <strong>Data invoeren</strong> in het menu.</p>
+        <p style={{ marginTop: 12 }}>Wil je daarna je eigen data laden? Ga dan naar <strong>Data in/uitvoeren</strong> in het menu.</p>
       </div>
     ),
   },
@@ -38,7 +38,7 @@ const secties: Sectie[] = [
     zoekTekst: "csv uploaden bestand importeren drag drop slepen sleep template downloaden",
     inhoud: (
       <div>
-        <p>Ga naar <strong>Data invoeren → CSV uploaden</strong>.</p>
+        <p>Ga naar <strong>Data in/uitvoeren → CSV uploaden</strong>.</p>
         <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 1.8 }}>
           <li>Sleep een CSV-bestand naar het uploadvlak, of klik om te bladeren</li>
           <li>Maximum bestandsgrootte: <strong>5 MB</strong></li>
@@ -148,9 +148,9 @@ const secties: Sectie[] = [
     zoekTekst: "handmatig invoeren formulier sessie exporteren importeren json opslaan laden",
     inhoud: (
       <div>
-        <p><strong>Handmatig invoeren</strong><br />Via <em>Data invoeren → Handmatig</em> kun je één applicatie tegelijk toevoegen via een formulier. Handig voor kleine aanpassingen of aanvullingen.</p>
+        <p><strong>Handmatig invoeren</strong><br />Via <em>Data in/uitvoeren → Handmatig</em> kun je één applicatie tegelijk toevoegen via een formulier. Handig voor kleine aanpassingen of aanvullingen.</p>
 
-        <p style={{ marginTop: 14 }}><strong>Sessie exporteren en importeren</strong><br />Via <em>Data invoeren → Sessie</em> of via de exportknop op de applicatieplaat kun je de volledige sessie opslaan als JSON-bestand. Dit bestand bevat alle applicaties en instellingen.</p>
+        <p style={{ marginTop: 14 }}><strong>Sessie exporteren en importeren</strong><br />Via <em>Data in/uitvoeren → Sessie</em> of via de exportknop op de applicatieplaat kun je de volledige sessie opslaan als JSON-bestand. Dit bestand bevat alle applicaties en instellingen.</p>
         <ul style={{ paddingLeft: 20, lineHeight: 1.8, marginTop: 6 }}>
           <li>Exporteer als JSON om de sessie op te slaan</li>
           <li>Importeer een sessie-JSON om verder te werken waar je gebleven was</li>
@@ -269,7 +269,7 @@ const secties: Sectie[] = [
           <li><strong>JPG</strong> — compacte afbeelding met witte achtergrond</li>
           <li><strong>SVG</strong> — vectorafbeelding, schaalbaar zonder kwaliteitsverlies</li>
           <li><strong>PDF</strong> — kies papierformaat (A0 t/m A4) en oriëntatie (liggend of staand)</li>
-          <li><strong>JSON-sessie</strong> — slaat alle applicaties en instellingen op; te importeren via <em>Data invoeren → Sessie</em></li>
+          <li><strong>JSON-sessie</strong> — slaat alle applicaties en instellingen op; te importeren via <em>Data in/uitvoeren → Sessie</em></li>
         </ul>
 
         <div style={{ marginTop: 12, padding: "10px 14px", backgroundColor: "#eff6ff", borderRadius: 8, borderLeft: "3px solid #3b82f6", fontSize: 13 }}>

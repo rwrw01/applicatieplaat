@@ -70,7 +70,7 @@ export default function Organisatie({ naam, clusters, velden, maxAppsPerRij, kaa
   }
 
   return (
-    <div style={{
+    <div data-pdf-blok="organisatie" style={{
       border: "2px solid #cbd5e1", borderRadius: "16px", padding: "16px 20px",
       backgroundColor: "#f8fafc",
     }}>

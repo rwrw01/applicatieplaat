@@ -2,7 +2,7 @@ import { toPng, toJpeg, toSvg } from "html-to-image"
 import type { Instellingen, Applicatie } from "@/types"
 import { getAppWaarde } from "./appUtils"
 
-function maakStamp(): string {
+export function maakStamp(): string {
   const nu = new Date()
   return (
     nu.getFullYear().toString() +
@@ -13,7 +13,7 @@ function maakStamp(): string {
   )
 }
 
-function maakBestandsnaam(ext: string): string {
+export function maakBestandsnaam(ext: string): string {
   return `applicatieplaat_${maakStamp()}.${ext}`
 }
 
@@ -38,16 +38,10 @@ function sanitizeMermaidLabel(tekst: string): string {
   return tekst.replace(/"/g, '#quot;')
 }
 
-export function genereerMermaidMarkdown(instellingen: Instellingen, applicaties: Applicatie[]): string {
+/** Genereer alleen de pure Mermaid block-beta code (zonder markdown wrapping). */
+export function genereerMermaidCode(instellingen: Instellingen, applicaties: Applicatie[]): string {
   const { subniveauSleutel, hoofdniveauSleutel } = instellingen
-  const regels: string[] = [
-    '# Applicatieplaat',
-    '',
-    `> Geëxporteerd op ${new Date().toLocaleDateString('nl-NL')} — ${applicaties.length} applicaties`,
-    '',
-    '```mermaid',
-    'block-beta',
-  ]
+  const regels: string[] = ['block-beta', '  columns 1']
 
   // Groepeer per subniveau
   const clusters: Record<string, Applicatie[]> = {}
@@ -76,12 +70,15 @@ export function genereerMermaidMarkdown(instellingen: Instellingen, applicaties:
       for (const [subNaam, apps] of Object.entries(subs).sort(([a], [b]) => a.localeCompare(b))) {
         const subId = sanitizeMermaidId(`${hoofdNaam}_${subNaam}`)
         regels.push(`    block:${subId}`)
-        regels.push(`      columns ${Math.min(apps.length, 4)}`)
+        regels.push(`      columns 1`)
         regels.push(`      ${subId}_label["${sanitizeMermaidLabel(subNaam)}"]`)
+        regels.push(`      block:${subId}_apps`)
+        regels.push(`        columns ${Math.min(apps.length, 4)}`)
         for (const app of apps) {
           const appId = sanitizeMermaidId(`app_${app.id}`)
-          regels.push(`      ${appId}["${sanitizeMermaidLabel(app.naam)}"]`)
+          regels.push(`        ${appId}["${sanitizeMermaidLabel(app.naam)}"]`)
         }
+        regels.push(`      end`)
         regels.push(`    end`)
       }
       regels.push(`  end`)
@@ -91,23 +88,50 @@ export function genereerMermaidMarkdown(instellingen: Instellingen, applicaties:
     for (const [subNaam, apps] of Object.entries(clusters).sort(([, a], [, b]) => b.length - a.length)) {
       const subId = sanitizeMermaidId(subNaam)
       regels.push(`  block:${subId}`)
-      regels.push(`    columns ${Math.min(apps.length, 4)}`)
+      regels.push(`    columns 1`)
       regels.push(`    ${subId}_label["${sanitizeMermaidLabel(subNaam)}"]`)
+      regels.push(`    block:${subId}_apps`)
+      regels.push(`      columns ${Math.min(apps.length, 4)}`)
       for (const app of apps) {
         const appId = sanitizeMermaidId(`app_${app.id}`)
-        regels.push(`    ${appId}["${sanitizeMermaidLabel(app.naam)}"]`)
+        regels.push(`      ${appId}["${sanitizeMermaidLabel(app.naam)}"]`)
       }
+      regels.push(`    end`)
       regels.push(`  end`)
     }
   }
 
-  regels.push('```')
-  regels.push('')
-
   return regels.join('\n')
 }
 
+/** Genereer een volledig Markdown-bestand met de Mermaid code in een code block. */
+export function genereerMermaidMarkdown(instellingen: Instellingen, applicaties: Applicatie[]): string {
+  const code = genereerMermaidCode(instellingen, applicaties)
+  return [
+    '# Applicatieplaat',
+    '',
+    `> Geëxporteerd op ${new Date().toLocaleDateString('nl-NL')} — ${applicaties.length} applicaties`,
+    '',
+    '```mermaid',
+    code,
+    '```',
+    '',
+  ].join('\n')
+}
+
 export function exporteerMermaid(instellingen: Instellingen, applicaties: Applicatie[]): void {
+  const inhoud = genereerMermaidCode(instellingen, applicaties)
+  const blob = new Blob([inhoud], { type: "text/plain" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = maakBestandsnaam("md")
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+/** Download een Markdown-bestand met heading, exportdatum en Mermaid code block. */
+export function exporteerMermaidMarkdownBestand(instellingen: Instellingen, applicaties: Applicatie[]): void {
   const inhoud = genereerMermaidMarkdown(instellingen, applicaties)
   const blob = new Blob([inhoud], { type: "text/markdown" })
   const url = URL.createObjectURL(blob)

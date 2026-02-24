@@ -38,7 +38,7 @@ export default function Plaat() {
     return (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "256px", color: "#9ca3af" }}>
         <p style={{ fontSize: "18px", fontWeight: "500" }}>Nog geen data</p>
-        <p style={{ fontSize: "14px", marginTop: "4px" }}>Ga naar <strong>Data invoeren</strong> om applicaties toe te voegen.</p>
+        <p style={{ fontSize: "14px", marginTop: "4px" }}>Ga naar <strong>Data in/uitvoeren</strong> om applicaties toe te voegen.</p>
       </div>
     )
   }
@@ -95,7 +95,7 @@ export default function Plaat() {
 
       if (rechtsMaxPerRij <= 0 || clusters.length === 1) {
         return (
-          <div style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
+          <div data-pdf-blok="cluster-kolom" style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
             {clusters.map(([naam, clusterApps], i) => (
               <Cluster key={naam} naam={naam} applicaties={clusterApps}
                 kleur={kleuren[(kleurOffset + i) % kleuren.length]}
@@ -124,7 +124,7 @@ export default function Plaat() {
       }
 
       return (
-        <div style={{ display: "grid", gridTemplateColumns: `${linksKolBreedte}px ${rechtsKolBreedte}px`, gap: `${GAP}px`, alignItems: "start" }}>
+        <div data-pdf-blok="cluster-grid" style={{ display: "grid", gridTemplateColumns: `${linksKolBreedte}px ${rechtsKolBreedte}px`, gap: `${GAP}px`, alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
             {links.map(({ naam, apps, origIdx }) => (
               <Cluster key={naam} naam={naam} applicaties={apps}
@@ -219,13 +219,13 @@ export default function Plaat() {
         )}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div ref={plaatRef} style={{ backgroundColor: "white", padding: 16 }}>
-            <Legenda velden={velden} />
             {zichtbareApps.length === 0
               ? <p style={{ color: "#9ca3af", fontSize: 14, textAlign: "center", padding: "32px 0" }}>
                   Geen applicaties voldoen aan de filters.
                 </p>
               : bouwPlaatInhoud(zichtbareApps)
             }
+            <Legenda velden={velden} />
           </div>
         </div>
       </div>

@@ -1,7 +1,10 @@
 "use client"
+import { useState } from "react"
 import { Save, Layers, Eye } from "lucide-react"
 import DropdownMenu from "@/components/ui/DropdownMenu"
-import { exporteerSessie, exporteerAfbeelding } from "@/lib/exportUtils"
+import { exporteerSessie, exporteerAfbeelding, exporteerMermaidMarkdownBestand } from "@/lib/exportUtils"
+import { exporteerPdf } from "@/lib/pdfExport"
+import type { PapierFormaat, Orientatie } from "@/lib/pdfExport"
 import type { VeldDefinitie, Instellingen, Applicatie } from "@/types"
 
 interface ToolbarProps {
@@ -37,6 +40,9 @@ export default function Toolbar({
 }: ToolbarProps) {
   const { velden, subniveauSleutel, hoofdniveauSleutel } = instellingen
   const aantalZichtbaar = velden.filter(v => v.zichtbaar).length
+  const [pdfFormaat, setPdfFormaat] = useState<PapierFormaat>("a4")
+  const [pdfOrientatie, setPdfOrientatie] = useState<Orientatie>("liggend")
+  const [pdfBezig, setPdfBezig] = useState(false)
 
   function wijzigSubniveau(sleutel: string) {
     onInstellingenWijzig({ ...instellingen, subniveauSleutel: sleutel })
@@ -90,6 +96,11 @@ export default function Toolbar({
     </div>
   )
 
+  const pdfSelectStijl: React.CSSProperties = {
+    padding: "3px 6px", borderRadius: 4, border: "1px solid #d1d5db",
+    fontSize: 12, color: "#1f2937", backgroundColor: "white", cursor: "pointer",
+  }
+
   const opslaanInhoud = (sluit: () => void) => (
     <>
       <button onClick={() => { exporteerSessie(instellingen, applicaties); sluit() }} style={menuItemStijl}>
@@ -101,6 +112,46 @@ export default function Toolbar({
           {f.toUpperCase()}
         </button>
       ))}
+      <hr style={{ margin: 0, border: "none", borderTop: "1px solid #f3f4f6" }} />
+      <button onClick={() => { exporteerMermaidMarkdownBestand(instellingen, applicaties); sluit() }} style={menuItemStijl}>
+        Mermaid (MD)
+      </button>
+      <hr style={{ margin: 0, border: "none", borderTop: "1px solid #f3f4f6" }} />
+      <div style={{ padding: "8px 14px" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "#374151", marginBottom: 6 }}>PDF</div>
+        <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+          <select value={pdfFormaat} onChange={e => setPdfFormaat(e.target.value as PapierFormaat)} style={pdfSelectStijl}>
+            <option value="a4">A4</option>
+            <option value="a3">A3</option>
+          </select>
+          <select value={pdfOrientatie} onChange={e => setPdfOrientatie(e.target.value as Orientatie)} style={pdfSelectStijl}>
+            <option value="liggend">Liggend</option>
+            <option value="staand">Staand</option>
+          </select>
+        </div>
+        <button
+          disabled={pdfBezig}
+          onClick={async () => {
+            if (!plaatRef.current) return
+            setPdfBezig(true)
+            try {
+              await exporteerPdf(plaatRef.current, pdfFormaat, pdfOrientatie)
+            } catch (err) {
+              console.error("PDF export mislukt:", err)
+            } finally {
+              setPdfBezig(false)
+              sluit()
+            }
+          }}
+          style={{
+            display: "block", width: "100%", padding: "7px 14px", textAlign: "center",
+            fontSize: 13, fontWeight: 600, border: "none", borderRadius: 6, cursor: pdfBezig ? "wait" : "pointer",
+            backgroundColor: pdfBezig ? "#e5e7eb" : "#2563eb", color: pdfBezig ? "#9ca3af" : "white",
+          }}
+        >
+          {pdfBezig ? "Bezig met exporteren..." : "Exporteer PDF"}
+        </button>
+      </div>
     </>
   )
 
