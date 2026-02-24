@@ -39,33 +39,29 @@ export default function Organisatie({ naam, clusters, velden, maxAppsPerRij, kaa
     return 40 + kaartRijen * (kaartHoogte + GAP)
   }
 
-  const linksKolommen = Math.min(maxAppsPerRij, Math.max(1, totalKolommen))
-  const rechtsKolommen = Math.max(0, totalKolommen - linksKolommen)
-  const rechtsMaxPerRij = Math.min(rechtsKolommen, maxAppsPerRij)
-  const linksKolBreedte = linksKolommen * kaartBreedte + (linksKolommen - 1) * GAP
-  const rechtsKolBreedte = rechtsMaxPerRij * kaartBreedte + Math.max(0, rechtsMaxPerRij - 1) * GAP
+  const kolommenPerClusterKolom = Math.min(maxAppsPerRij, Math.max(1, totalKolommen))
+  const aantalClusterKolommen = Math.max(1, Math.floor(totalKolommen / kolommenPerClusterKolom))
+  const clusterKolomBreedte = kolommenPerClusterKolom * kaartBreedte + (kolommenPerClusterKolom - 1) * GAP
 
-  const enkelKolom = rechtsMaxPerRij <= 0 || gesorteerd.length <= 1
+  const enkelKolom = aantalClusterKolommen <= 1 || gesorteerd.length <= 1
 
-  // "Vul de kortste kolom" algoritme
+  // "Vul de kortste kolom" algoritme (N kolommen)
   type Entry = { naam: string; apps: Applicatie[]; origIdx: number }
-  let linksEntries: Entry[] = []
-  let rechtsEntries: Entry[] = []
+  const kolomEntries: Entry[][] = Array.from({ length: aantalClusterKolommen }, () => [])
+  const kolomHoogtes: number[] = new Array(aantalClusterKolommen).fill(0)
 
   if (!enkelKolom) {
-    let linksHoogte = geschatteHoogte(gesorteerd[0][1], linksKolommen)
-    let rechtsHoogte = 0
-    linksEntries = [{ naam: gesorteerd[0][0], apps: gesorteerd[0][1], origIdx: 0 }]
+    kolomEntries[0].push({ naam: gesorteerd[0][0], apps: gesorteerd[0][1], origIdx: 0 })
+    kolomHoogtes[0] = geschatteHoogte(gesorteerd[0][1], kolommenPerClusterKolom)
 
     for (let i = 1; i < gesorteerd.length; i++) {
       const [clNaam, clApps] = gesorteerd[i]
-      if (rechtsHoogte <= linksHoogte) {
-        rechtsEntries.push({ naam: clNaam, apps: clApps, origIdx: i })
-        rechtsHoogte += geschatteHoogte(clApps, rechtsMaxPerRij) + GAP
-      } else {
-        linksEntries.push({ naam: clNaam, apps: clApps, origIdx: i })
-        linksHoogte += geschatteHoogte(clApps, linksKolommen) + GAP
+      let kortsteIdx = 0
+      for (let k = 1; k < aantalClusterKolommen; k++) {
+        if (kolomHoogtes[k] < kolomHoogtes[kortsteIdx]) kortsteIdx = k
       }
+      kolomEntries[kortsteIdx].push({ naam: clNaam, apps: clApps, origIdx: i })
+      kolomHoogtes[kortsteIdx] += geschatteHoogte(clApps, kolommenPerClusterKolom) + GAP
     }
   }
 
@@ -89,24 +85,23 @@ export default function Organisatie({ naam, clusters, velden, maxAppsPerRij, kaa
                 maxPerRij={Math.min(apps.length, maxAppsPerRij)} velden={velden} kaartHoogte={kaartHoogte} kaartBreedte={kaartBreedte} />
             ))}
           </div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: `${linksKolBreedte}px ${rechtsKolBreedte}px`, gap: `${GAP}px`, alignItems: "start" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
-              {linksEntries.map(({ naam: clNaam, apps, origIdx }) => (
-                <Cluster key={clNaam} naam={clNaam} applicaties={apps}
-                  kleur={kleuren[(startKleurIndex + origIdx) % kleuren.length]}
-                  maxPerRij={linksKolommen} velden={velden} kaartHoogte={kaartHoogte} kaartBreedte={kaartBreedte} />
+        ) : (() => {
+          const gevuldeKolommen = kolomEntries.filter(k => k.length > 0)
+          const gridTemplate = gevuldeKolommen.map(() => `${clusterKolomBreedte}px`).join(" ")
+          return (
+            <div style={{ display: "grid", gridTemplateColumns: gridTemplate, gap: `${GAP}px`, alignItems: "start" }}>
+              {gevuldeKolommen.map((entries, kolomIdx) => (
+                <div key={kolomIdx} style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
+                  {entries.map(({ naam: clNaam, apps, origIdx }) => (
+                    <Cluster key={clNaam} naam={clNaam} applicaties={apps}
+                      kleur={kleuren[(startKleurIndex + origIdx) % kleuren.length]}
+                      maxPerRij={kolommenPerClusterKolom} velden={velden} kaartHoogte={kaartHoogte} kaartBreedte={kaartBreedte} />
+                  ))}
+                </div>
               ))}
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
-              {rechtsEntries.map(({ naam: clNaam, apps, origIdx }) => (
-                <Cluster key={clNaam} naam={clNaam} applicaties={apps}
-                  kleur={kleuren[(startKleurIndex + origIdx) % kleuren.length]}
-                  maxPerRij={rechtsMaxPerRij} velden={velden} kaartHoogte={kaartHoogte} kaartBreedte={kaartBreedte} />
-              ))}
-            </div>
-          </div>
-        )}
+          )
+        })()}
       </div>
     </div>
   )

@@ -87,13 +87,11 @@ export default function Plaat() {
     function clusterGrid(clusters: [string, typeof applicaties][], kleurOffset = 0) {
       if (clusters.length === 0) return null
 
-      const linksKolommen = Math.min(maxAppsPerRij, Math.max(1, totalKolommen))
-      const rechtsKolommen = Math.max(0, totalKolommen - linksKolommen)
-      const rechtsMaxPerRij = Math.min(rechtsKolommen, maxAppsPerRij)
-      const linksKolBreedte = linksKolommen * kaartBreedte + (linksKolommen - 1) * GAP
-      const rechtsKolBreedte = rechtsMaxPerRij * kaartBreedte + Math.max(0, rechtsMaxPerRij - 1) * GAP
+      const kolommenPerClusterKolom = Math.min(maxAppsPerRij, Math.max(1, totalKolommen))
+      const aantalClusterKolommen = Math.max(1, Math.floor(totalKolommen / kolommenPerClusterKolom))
+      const clusterKolomBreedte = kolommenPerClusterKolom * kaartBreedte + (kolommenPerClusterKolom - 1) * GAP
 
-      if (rechtsMaxPerRij <= 0 || clusters.length === 1) {
+      if (aantalClusterKolommen <= 1 || clusters.length === 1) {
         return (
           <div data-pdf-blok="cluster-kolom" style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
             {clusters.map(([naam, clusterApps], i) => (
@@ -105,40 +103,38 @@ export default function Plaat() {
         )
       }
 
-      let linksHoogte = geschatteHoogte(clusters[0][1], linksKolommen)
-      let rechtsHoogte = 0
-
       type Entry = { naam: string; apps: typeof applicaties; origIdx: number }
-      const links: Entry[] = [{ naam: clusters[0][0], apps: clusters[0][1], origIdx: 0 }]
-      const rechts: Entry[] = []
+      const kolomEntries: Entry[][] = Array.from({ length: aantalClusterKolommen }, () => [])
+      const kolomHoogtes: number[] = new Array(aantalClusterKolommen).fill(0)
+
+      // Eerste cluster altijd naar kolom 0
+      kolomEntries[0].push({ naam: clusters[0][0], apps: clusters[0][1], origIdx: 0 })
+      kolomHoogtes[0] = geschatteHoogte(clusters[0][1], kolommenPerClusterKolom)
 
       for (let i = 1; i < clusters.length; i++) {
         const [naam, clusterApps] = clusters[i]
-        if (rechtsHoogte <= linksHoogte) {
-          rechts.push({ naam, apps: clusterApps, origIdx: i })
-          rechtsHoogte += geschatteHoogte(clusterApps, rechtsMaxPerRij) + GAP
-        } else {
-          links.push({ naam, apps: clusterApps, origIdx: i })
-          linksHoogte += geschatteHoogte(clusterApps, linksKolommen) + GAP
+        let kortsteIdx = 0
+        for (let k = 1; k < aantalClusterKolommen; k++) {
+          if (kolomHoogtes[k] < kolomHoogtes[kortsteIdx]) kortsteIdx = k
         }
+        kolomEntries[kortsteIdx].push({ naam, apps: clusterApps, origIdx: i })
+        kolomHoogtes[kortsteIdx] += geschatteHoogte(clusterApps, kolommenPerClusterKolom) + GAP
       }
 
+      const gevuldeKolommen = kolomEntries.filter(k => k.length > 0)
+      const gridTemplate = gevuldeKolommen.map(() => `${clusterKolomBreedte}px`).join(" ")
+
       return (
-        <div data-pdf-blok="cluster-grid" style={{ display: "grid", gridTemplateColumns: `${linksKolBreedte}px ${rechtsKolBreedte}px`, gap: `${GAP}px`, alignItems: "start" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
-            {links.map(({ naam, apps, origIdx }) => (
-              <Cluster key={naam} naam={naam} applicaties={apps}
-                kleur={kleuren[(kleurOffset + origIdx) % kleuren.length]}
-                maxPerRij={linksKolommen} velden={velden} kaartHoogte={kaartHoogte} kaartBreedte={kaartBreedte} />
-            ))}
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
-            {rechts.map(({ naam, apps, origIdx }) => (
-              <Cluster key={naam} naam={naam} applicaties={apps}
-                kleur={kleuren[(kleurOffset + origIdx) % kleuren.length]}
-                maxPerRij={rechtsMaxPerRij} velden={velden} kaartHoogte={kaartHoogte} kaartBreedte={kaartBreedte} />
-            ))}
-          </div>
+        <div data-pdf-blok="cluster-grid" style={{ display: "grid", gridTemplateColumns: gridTemplate, gap: `${GAP}px`, alignItems: "start" }}>
+          {gevuldeKolommen.map((entries, kolomIdx) => (
+            <div key={kolomIdx} data-pdf-blok="cluster-kolom" style={{ display: "flex", flexDirection: "column", gap: `${GAP}px` }}>
+              {entries.map(({ naam, apps, origIdx }) => (
+                <Cluster key={naam} naam={naam} applicaties={apps}
+                  kleur={kleuren[(kleurOffset + origIdx) % kleuren.length]}
+                  maxPerRij={kolommenPerClusterKolom} velden={velden} kaartHoogte={kaartHoogte} kaartBreedte={kaartBreedte} />
+              ))}
+            </div>
+          ))}
         </div>
       )
     }

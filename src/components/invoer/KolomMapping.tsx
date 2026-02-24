@@ -10,6 +10,8 @@ interface KolomState {
   header: string
   type: VeldType
   rol: 'hoofdniveau' | 'subniveau' | 'naam' | 'veld'
+  vrijeTekst: boolean
+  importeren: boolean
 }
 
 function initKolomStates(analyse: CSVAnalyse): KolomState[] {
@@ -21,7 +23,8 @@ function initKolomStates(analyse: CSVAnalyse): KolomState[] {
       lc === 'organisatie' || lc === 'organization' || lc === 'organisation' || lc === 'hoofdniveau' ? 'hoofdniveau' :
       lc === 'cluster' || lc === 'subniveau' ? 'subniveau' :
       lc === 'naam' || lc === 'name' ? 'naam' : 'veld'
-    return { header, type, rol }
+    const vrijeTekst = type === 'tekst' && waarden.some(w => w.length > 64)
+    return { header, type, rol, vrijeTekst, importeren: true }
   })
 }
 
@@ -85,13 +88,13 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
     const velden: VeldDefinitie[] = [
       { id: 'v-naam', label: naamKolom.header, sleutel: 'naam', type: 'tekst', zichtbaar: true, maxLengte: 20 },
       ...kolommen
-        .filter(k => k.rol === 'veld')
+        .filter(k => k.rol === 'veld' && k.importeren)
         .map((k, i) => ({
           id: `v-import-${i}`,
           label: k.header,
           sleutel: bepaalSleutel(k.header),
           type: k.type,
-          zichtbaar: true,
+          zichtbaar: !k.vrijeTekst,
           ...(k.type === 'tekst' ? { maxLengte: 20 } : {}),
         } as VeldDefinitie)),
     ]
@@ -116,13 +119,15 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
       </div>
 
       <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 110px 230px', gap: 8,
+        <div style={{ display: 'grid', gridTemplateColumns: '40px 1fr 1.5fr 110px 80px 230px', gap: 8,
           padding: '8px 12px', backgroundColor: '#f9fafb',
           borderBottom: '1px solid #e5e7eb', fontSize: 11, fontWeight: 600, color: '#6b7280',
           textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <span></span>
           <span>Kolomnaam</span>
           <span>Voorbeeldwaarden</span>
           <span>Type</span>
+          <span>Vrije tekst</span>
           <span>Rol</span>
         </div>
 
@@ -135,12 +140,19 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
 
           return (
             <div key={kolom.header}
-              style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 110px 230px', gap: 8,
+              style={{ display: 'grid', gridTemplateColumns: '40px 1fr 1.5fr 110px 80px 230px', gap: 8,
                 padding: '8px 12px', alignItems: 'center',
                 borderBottom: i < kolommen.length - 1 ? '1px solid #f3f4f6' : 'none',
                 backgroundColor: kolom.rol !== 'veld' ? '#eff6ff' : 'white' }}>
 
-              <span style={{ fontSize: 12, fontWeight: 500, color: '#374151' }}>{kolom.header}</span>
+              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <input type="checkbox" checked={kolom.importeren}
+                  disabled={kolom.rol !== 'veld'}
+                  onChange={() => updateKolom(i, { importeren: !kolom.importeren })}
+                  style={{ cursor: kolom.rol !== 'veld' ? 'not-allowed' : 'pointer', width: 16, height: 16 }} />
+              </label>
+
+              <span style={{ fontSize: 12, fontWeight: 500, color: kolom.importeren || kolom.rol !== 'veld' ? '#374151' : '#9ca3af' }}>{kolom.header}</span>
 
               <span style={{ fontSize: 11, color: '#9ca3af', overflow: 'hidden',
                 textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={voorbeelden}>
@@ -152,6 +164,13 @@ export default function KolomMapping({ analyse, onImporteer, onAnnuleer }: Props
                 onChange={e => updateKolom(i, { type: e.target.value as VeldType })}>
                 {VELD_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
+
+              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <input type="checkbox" checked={kolom.vrijeTekst}
+                  disabled={kolom.rol !== 'veld'}
+                  onChange={() => updateKolom(i, { vrijeTekst: !kolom.vrijeTekst })}
+                  style={{ cursor: kolom.rol !== 'veld' ? 'not-allowed' : 'pointer', width: 16, height: 16 }} />
+              </label>
 
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 {(['hoofdniveau', 'subniveau', 'naam', 'veld'] as const).map(rol => (

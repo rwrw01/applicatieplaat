@@ -29,7 +29,7 @@ interface FilterSectieProps {
 }
 
 function FilterSectie({ label, waarden, geselecteerd, onChange }: FilterSectieProps) {
-  const [ingeklapt, setIngeklapt] = useState(false)
+  const [ingeklapt, setIngeklapt] = useState(true)
   const actief = geselecteerd.length > 0 && geselecteerd.length < waarden.length
 
   return (

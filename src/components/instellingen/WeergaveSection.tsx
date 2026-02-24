@@ -133,7 +133,7 @@ export default function WeergaveSection({ maxAppsPerRij, kaartBreedte, kaartHoog
       </div>
 
       {/* Live preview */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px", flexShrink: 0, position: "sticky", top: "24px", alignSelf: "flex-start" }}>
         <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}>Voorbeeld kaart</label>
         <div style={{ width: kaartBreedte, transition: "width 0.1s" }}>
           <AppKaart app={maakVoorbeeldApp(velden)} velden={velden} kaartHoogte={kaartHoogte} />
