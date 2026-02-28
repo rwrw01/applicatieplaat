@@ -73,4 +73,18 @@ Dit vereist [Playwright](https://playwright.dev/) (`npm i playwright`).
 
 ## Licentie
 
-[MIT](LICENSE) — Athide, NL
+Dit project is gelicenseerd onder de [MIT License](LICENSE) — Ralph Wagter / [Athide.nl](https://athide.nl)
+
+### Gebruikte open-source packages en licenties
+
+| Package | Licentie |
+|---------|----------|
+| [Next.js](https://github.com/vercel/next.js) | MIT |
+| [React](https://github.com/facebook/react) | MIT |
+| [PapaParse](https://github.com/mholt/PapaParse) | MIT |
+| [html-to-image](https://github.com/bubkoo/html-to-image) | MIT |
+| [jsPDF](https://github.com/parallax/jsPDF) | MIT |
+| [Lucide React](https://github.com/lucide-icons/lucide) | ISC |
+| [Mermaid](https://github.com/mermaid-js/mermaid) | MIT |
+| [clsx](https://github.com/lukeed/clsx) | MIT |
+| [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) | MIT |
